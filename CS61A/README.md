@@ -6,4 +6,4 @@ The traditional recommendation for Programming is [Scheme/Structure and Interpre
 I initially started with this resource, but then started a job with a Python tech stack, and realised I had not learnt OOP and advanced Python topics well. 
 
 
-So I have pivoted to using CS61A which is “in the tradition of SICP but uses Python".
+So I have pivoted to using [CS61A](https://cs61a.org/) which is “in the tradition of SICP but uses Python".
