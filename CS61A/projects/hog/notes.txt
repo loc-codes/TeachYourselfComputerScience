@@ -1,0 +1,14 @@
+Two players alternate turns trying to be the first to end a turn with GOAL points
+Goal defaults to 100
+Player chooses number of dice to roll, up to 10. Scores the sum of the outcomes
+If any dice returns a 1, the score for turn is 1 (Sow Sad)
+
+Boar Brawl. A player who rolls zero dice scores three times the absolute difference between the 
+tens digit of the opponent’s score and the ones digit of the current player’s score, or 1, whichever is higher.
+
+Fuzzy Factors: A fuzzy number is any number n where the greatest common divisor (GCD) of n and 100 is greater than 10. 
+Recall that the GCD of a and b is the largest factor that is shared between both numbers (for example, the GCD of 10 and 15 is 5). 
+After a player gains points for their turn, if their resulting score is a fuzzy number, add two times the tens digit of the GCD to the player's score.
+
+Eg: A player has 14 points and rolls 2 dice that total 6 points. Their new score would be 20, and since 20 is a fuzzy number (the GCD of 20 and 100 is 20), 
+their score is increased to 20 + 2 * 2 = 24.
