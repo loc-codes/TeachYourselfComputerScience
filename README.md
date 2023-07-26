@@ -6,7 +6,7 @@ This repo tracks all my self-study of computer science topics, following the cir
 
 ### Subjects:
 1. Programming - [CS61A Summer 2023](https://cs61a.org/) (Australian Winter 2023)
-2. Math for Computer Science
+2. Math for Computer Science (How to Solve It and How to Prove It)
 3. Data Structures and Algorithms
 4. Computer Architecture
 5. Networking
