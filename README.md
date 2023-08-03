@@ -5,11 +5,15 @@ This repo tracks all my self-study of computer science topics, following the cir
 
 
 ### Subjects:
-1. Programming - [CS61A Summer 2023](https://cs61a.org/) (Australian Winter 2023)
-2. Math for Computer Science (How to Solve It and How to Prove It)
-3. Data Structures and Algorithms
-4. Computer Architecture
-5. Networking
-6. Operating Systems
-7. Distributed Sytems
-8. Databases
+| Topic | Repo | Dates |
+|:------|:-----|:------|
+|[Programming](https://teachyourselfcs.com/#programming)| |July-August 2023|
+|[Math for CS](https://teachyourselfcs.com/#math)| | |
+|[Data Structures and Algorithms](https://teachyourselfcs.com/#algorithms)| | |
+|[Computer Architecture](https://teachyourselfcs.com/#architecture)| | |
+|[Networking](https://teachyourselfcs.com/#networking) | | |
+|[Operating Systems](https://teachyourselfcs.com/#operating-systems) | | |
+|[Distributed Sytems](https://teachyourselfcs.com/#distributed-systems) | | |
+|[Databases](https://teachyourselfcs.com/#databases) | | |
+
+
