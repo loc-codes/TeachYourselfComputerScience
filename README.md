@@ -4,8 +4,7 @@
 This repo tracks all my self-study of computer science topics, following the cirriculum on [Teach Yourself Computer Science](https://teachyourselfcs.com/). The cirriculum follows a typical undergraduate computer science major using free courseware from multiple universities
 
 
-### Subjects:
-| Topic | Repo | Dates |
+| Subject | Repo | Dates |
 |:------|:-----|:------|
 |[Programming](https://teachyourselfcs.com/#programming)| |July-August 2023|
 |[Math for CS](https://teachyourselfcs.com/#math)| | |
