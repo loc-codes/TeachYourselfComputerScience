@@ -1,0 +1,5 @@
+(define (fun-tree fun t)
+    (define label (fun (label t)))
+    (define branches (map (lambda (b) (fun-tree fun b)) (branches t)))
+    (tree new-label new-branches)
+)
