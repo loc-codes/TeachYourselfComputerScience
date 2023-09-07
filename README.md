@@ -6,7 +6,7 @@ This repo tracks all my self-study of computer science topics, following the cir
 
 | Subject | Repo | Dates |
 |:------|:-----|:------|
-|[Programming](https://teachyourselfcs.com/#programming)|[CS61A](https://github.com/loc-codes/TeachYourselfComputerScience/tree/main/CS61A)|July-August 2023|
+|[Programming](https://teachyourselfcs.com/#programming)|[CS61A](https://github.com/loc-codes/TeachYourselfComputerScience/tree/main/CS61A)|July-September 2023|
 |[Math for CS](https://teachyourselfcs.com/#math)| | |
 |[Data Structures and Algorithms](https://teachyourselfcs.com/#algorithms)| | |
 |[Computer Architecture](https://teachyourselfcs.com/#architecture)| | |
