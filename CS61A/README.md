@@ -1,5 +1,6 @@
-### Most undergraduate CS programs start with an “introduction” to computer programming. 
-#### The best versions of these courses cater not just to novices, but also to those who missed beneficial concepts and programming models while first learning to code.
+## Subject 1: Programming
+### "Most undergraduate CS programs start with an “introduction” to computer programming. 
+#### The best versions of these courses cater not just to novices, but also to those who missed beneficial concepts and programming models while first learning to code."
 
 
 The traditional recommendation for Programming is [Scheme/Structure and Interpretation of Computer Programs](https://sarabander.github.io/sicp/html/index.xhtml). 
@@ -7,3 +8,5 @@ I initially started with this resource, but then started a job with a Python tec
 
 
 So I have pivoted to using [CS61A](https://cs61a.org/) which is “in the tradition of SICP but uses Python".
+
+Completed: September 10, 2023
