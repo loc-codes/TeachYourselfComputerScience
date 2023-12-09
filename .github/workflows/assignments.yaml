@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'Data Structures & Algorithms (CS61B)/week*/lab*'
+  workflow_dispatch:
 
 jobs:
   sync:
