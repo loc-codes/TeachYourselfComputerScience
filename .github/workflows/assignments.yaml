@@ -1,0 +1,41 @@
+name: Sync CS61B Labs to Grading Repo
+
+on:
+  push:
+    paths:
+      - 'Data Structures & Algorithms (CS61B)/week*/lab*'
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout TeachYourselfComputerScience Repository
+      uses: actions/checkout@v2
+      with:
+        repository: '<your-username>/TeachYourselfComputerScience'
+        path: 'TeachYourselfComputerScience'
+
+    - name: Setup Git Config
+      run: |
+        git config --global user.name 'Your Name'
+        git config --global user.email 'your-email@example.com'
+
+    - name: Checkout CS61B Grading Repository
+      uses: actions/checkout@v2
+      with:
+        repository: '<your-username>/cs61b_grading_repo'
+        token: ${{ secrets.GITHUB_TOKEN }}
+        path: 'cs61b_grading_repo'
+
+    - name: Sync Lab Updates
+      run: |
+        rsync -av --progress TeachYourselfComputerScience/'Data Structures 
+& Algorithms (CS61B)'/week*/lab* cs61b_grading_repo/ --exclude .git
+
+    - name: Commit and Push Changes
+      run: |
+        cd cs61b_grading_repo
+        git add .
+        git commit -m "Sync Lab Updates"
+        git push
+
