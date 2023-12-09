@@ -25,4 +25,3 @@ public class Collatz {
         System.out.println();
     }
 }
-
