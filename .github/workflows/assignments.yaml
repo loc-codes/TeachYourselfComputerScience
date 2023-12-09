@@ -12,26 +12,24 @@ jobs:
     - name: Checkout TeachYourselfComputerScience Repository
       uses: actions/checkout@v2
       with:
-        repository: '<your-username>/TeachYourselfComputerScience'
+        repository: 'loc-codes/TeachYourselfComputerScience'
         path: 'TeachYourselfComputerScience'
 
     - name: Setup Git Config
       run: |
-        git config --global user.name 'Your Name'
-        git config --global user.email 'your-email@example.com'
+        git config --global user.name 'loc-codes'
+        git config --global user.email 'lachie.s.young@gmail.com'
 
     - name: Checkout CS61B Grading Repository
       uses: actions/checkout@v2
       with:
-        repository: '<your-username>/cs61b_grading_repo'
+        repository: 'loc-codes/cs61b_grading_repo'
         token: ${{ secrets.GITHUB_TOKEN }}
         path: 'cs61b_grading_repo'
 
     - name: Sync Lab Updates
       run: |
-        rsync -av --progress TeachYourselfComputerScience/'Data Structures 
-& Algorithms (CS61B)'/week*/lab* cs61b_grading_repo/ --exclude .git
-
+        rsync -av --progress TeachYourselfComputerScience/'Data Structures & Algorithms (CS61B)'/week*/lab* cs61b_grading_repo/ --exclude .git
     - name: Commit and Push Changes
       run: |
         cd cs61b_grading_repo
