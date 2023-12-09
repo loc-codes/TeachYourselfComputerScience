@@ -25,7 +25,7 @@ jobs:
       uses: actions/checkout@v2
       with:
         repository: 'loc-codes/cs61b_grading_repo'
-        token: ${{ secrets.GRADE_SYNC_TOKEN }}
+        token: ${{ secrets.CS61B_SYNC_TOKEN }}
         path: 'cs61b_grading_repo'
 
     - name: Sync Lab Updates
