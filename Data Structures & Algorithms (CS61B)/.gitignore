@@ -9,6 +9,7 @@
 !library-sp21
 !foods.csv
 !*.md
+reference.md
 !*.pdf
 *.class
 *.log
