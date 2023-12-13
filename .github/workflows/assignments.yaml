@@ -35,7 +35,7 @@ jobs:
 
     - name: Sync Project Updates
       run: |
-        rsync -av --progress TeachYourselfComputerScience/'Data Structures & Algorithms (CS61B)'/week*/proj* cs61b_grading_repo/ --exclude .git
+        rsync -av --progress TeachYourselfComputerScience/'Data Structures & Algorithms (CS61B)'/projects/proj* cs61b_grading_repo/ --exclude .git
 
     - name: Commit and Push Changes
       run: |
