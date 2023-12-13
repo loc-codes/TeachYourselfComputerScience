@@ -1,9 +1,10 @@
-name: Sync CS61B Labs to Grading Repo
+name: Sync CS61B Labs and Projects to Grading Repo
 
 on:
   push:
     paths:
       - 'Data Structures & Algorithms (CS61B)/week*/lab*'
+      - 'Data Structures & Algorithms (CS61B)/week*/proj*'
   workflow_dispatch:
 
 jobs:
@@ -31,10 +32,14 @@ jobs:
     - name: Sync Lab Updates
       run: |
         rsync -av --progress TeachYourselfComputerScience/'Data Structures & Algorithms (CS61B)'/week*/lab* cs61b_grading_repo/ --exclude .git
+
+    - name: Sync Project Updates
+      run: |
+        rsync -av --progress TeachYourselfComputerScience/'Data Structures & Algorithms (CS61B)'/week*/proj* cs61b_grading_repo/ --exclude .git
+
     - name: Commit and Push Changes
       run: |
         cd cs61b_grading_repo
         git add .
-        git commit -m "Sync Lab Updates"
+        git commit -m "Sync Lab and Project Updates"
         git push
-
