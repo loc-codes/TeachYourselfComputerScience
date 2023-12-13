@@ -1,11 +1,12 @@
 package game2048;
 
+import java.awt.*;
 import java.util.Formatter;
 import java.util.Observable;
 
 
 /** The state of a game of 2048.
- *  @author TODO: YOUR NAME HERE
+ *  @author Lachlan Young
  */
 public class Model extends Observable {
     /** Current contents of the board. */
@@ -19,7 +20,7 @@ public class Model extends Observable {
 
     /* Coordinate System: column C, row R of the board (where row 0,
      * column 0 is the lower-left corner of the board) will correspond
-     * to board.tile(c, r).  Be careful! It works like (x, y) coordinates.
+     * to board.tile(column, row).  Be careful! It works like (x, y) coordinates.
      */
 
     /** Largest piece value. */
@@ -110,10 +111,24 @@ public class Model extends Observable {
         boolean changed;
         changed = false;
 
+        board.setViewingPerspective(side);
+
+        // Objects in this: Side, Board, Tile
         // TODO: Modify this.board (and perhaps this.score) to account
+        for (int column = 0; column < board.size(); column += 1) {
+            Tile[] updatedTiles = new Tile[4];
+            for (int row = board.size()-1; row >= 0 ; row -= 1) {
+                Tile originalTile = board.tile(column,row);
+                if (originalTile != null){
+                    if (processTile(column, row, originalTile, updatedTiles)){
+                        changed = true;
+                    }
+                }
+            }
+        }
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
-
+        board.setViewingPerspective(Side.NORTH);
         checkGameOver();
         if (changed) {
             setChanged();
@@ -121,6 +136,31 @@ public class Model extends Observable {
         return changed;
     }
 
+    private boolean processTile (int column, int row, Tile originalTile, Tile[] updatedTiles) {
+        boolean changedTile = false;
+
+        for (int nextRow = row + 1; nextRow < board.size(); nextRow += 1) {
+            Tile otherTile = board.tile(column, nextRow);
+
+            if (otherTile != null) {
+                if (originalTile.value() == otherTile.value() && updatedTiles[nextRow] == null) {
+                    score += originalTile.value() * 2;
+                    board.move(column, nextRow, originalTile);
+                    updatedTiles[nextRow] = originalTile;
+                } else {
+                    board.move(column, nextRow - 1, originalTile);
+                }
+                changedTile = true;
+                break;
+            }
+            else if (nextRow == board.size() - 1) {
+                board.move(column, nextRow, originalTile);
+                changedTile = true;
+            }
+        }
+
+        return changedTile;
+    }
     /** Checks if the game is over and sets the gameOver variable
      *  appropriately.
      */
@@ -137,10 +177,15 @@ public class Model extends Observable {
      *  Empty spaces are stored as null.
      * */
     public static boolean emptySpaceExists(Board b) {
-        // TODO: Fill in this function.
+        // TODO: Fill in this function
+        for (int i = 0; i < b.size(); i += 1) {
+            for (int j = 0; j < b.size(); j += 1) {
+                if (b.tile(i, j) == null)
+                    return true;
+            }
+        }
         return false;
     }
-
     /**
      * Returns true if any tile is equal to the maximum valid value.
      * Maximum valid value is given by MAX_PIECE. Note that
@@ -148,6 +193,14 @@ public class Model extends Observable {
      */
     public static boolean maxTileExists(Board b) {
         // TODO: Fill in this function.
+        for (int i = 0; i < b.size(); i += 1) {
+            for (int j = 0; j < b.size(); j += 1) {
+                Tile tile = b.tile(i, j);
+                if (tile != null && tile.value() == MAX_PIECE) {
+                        return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -159,6 +212,16 @@ public class Model extends Observable {
      */
     public static boolean atLeastOneMoveExists(Board b) {
         // TODO: Fill in this function.
+        if (emptySpaceExists(b)) return true;
+        for (int i = 0; i < b.size(); i += 1) {
+            for (int j = 0; j < b.size(); j += 1) {
+                int tileValue = b.tile(i, j).value();
+                if (i > 0 && tileValue == b.tile(i - 1, j).value()) return true;
+                if (i < b.size() - 1 && tileValue == b.tile(i + 1, j).value()) return true;
+                if (j > 0 && tileValue == b.tile(i, j - 1).value()) return true;
+                if (j < b.size() - 1 && tileValue == b.tile(i, j + 1).value()) return true;
+            }
+        }
         return false;
     }
 
