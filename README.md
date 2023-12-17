@@ -7,7 +7,7 @@ This repo tracks all my self-study of computer science topics, following the cir
 | Subject | Repo | Dates | Status |
 |:------|:-----|:------|:------|
 |[Programming](https://teachyourselfcs.com/#programming)|[UC Berkeley CS61A - Summer 2023](https://inst.eecs.berkeley.edu/~cs61a/su23/)|July-September 2023| ✅ |
-|[Math for CS](https://teachyourselfcs.com/#math)|[Yale Discrete Mathematics](https://cims.nyu.edu/~regev/teaching/discrete_math_fall_2005/dmbook.pdf)|September 2023- |🚧 In Progress 🚧|
+|[Math for CS](https://teachyourselfcs.com/#math)|[UC Berkeley CS70 - Fall 2015](https://inst.eecs.berkeley.edu/~cs70/sp15/)|December 2023- |🚧 In Progress 🚧|
 |[Data Structures and Algorithms](https://teachyourselfcs.com/#algorithms)|[UC Berkeley CS61B - Spring 2021](https://sp21.datastructur.es/index.html) |December 2023-  |🚧 In Progress 🚧|
 |[Computer Architecture](https://teachyourselfcs.com/#architecture)| | | |
 |[Networking](https://teachyourselfcs.com/#networking) | | | |
