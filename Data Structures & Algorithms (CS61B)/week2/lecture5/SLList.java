@@ -16,7 +16,7 @@ public class SLList {
     private int size;
 
     public SLList () {
-        sentinel = new IntNode(42, null); // Initalise sentinel with any int
+        sentinel = new IntNode(1, null); // Initalise sentinel with any int
         size = 0;
     }
     public SLList (int x) {
