@@ -114,4 +114,32 @@ public class LinkedListDequeTest {
             assertEquals("Should have the same value", i, (double) lld1.removeLast(), 0.0);
         }
     }
+
+    @Test
+    // Test get method
+    public void getTest() {
+        LinkedListDeque<String> lld1 = new LinkedListDeque<String>();
+        lld1.addFirst("front");
+        lld1.addLast("middle");
+        lld1.addLast("back");
+        String actual1 = lld1.get(1);
+        assertEquals("middle", actual1);
+        String actual2 = lld1.get(3);
+        assertEquals(null, actual2);
+    }
+
+    @Test
+    // Test recursiveget method
+    public void getRecursiveTest() {
+        LinkedListDeque<String> lld1 = new LinkedListDeque<String>();
+        lld1.addFirst("front");
+        lld1.addLast("middle");
+        lld1.addLast("back");
+        String actual1 = lld1.getRecursive(0);
+        assertEquals("front", actual1);
+        String actual2 = lld1.getRecursive(3);
+        assertEquals(null, actual2);
+        String actual3 = lld1.getRecursive(2);
+        assertEquals("back", actual3);
+    }
 }

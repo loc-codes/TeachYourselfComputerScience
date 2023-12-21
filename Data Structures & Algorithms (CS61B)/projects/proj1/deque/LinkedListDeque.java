@@ -1,13 +1,13 @@
 package deque;
 
-public class LinkedListDeque<Type> {
+public class LinkedListDeque<T> {
 
     private class Node {
-        public Type item;
+        public T item;
         public Node next;
         public Node prev;
 
-        public Node(Type i, Node p, Node n) {
+        public Node(T i, Node p, Node n) {
             item = i;
             prev = p;
             next = n;
@@ -22,15 +22,13 @@ public class LinkedListDeque<Type> {
         size = 0;
     }
 
-    private void initialiseList(Type elem){
+    private void initialiseList(T elem){
         Node initialNode = new Node(elem, sentinel, sentinel);
         sentinel.next = initialNode;
         sentinel.prev = initialNode;
     }
 
-    public void addFirst(Type elem){
-
-
+    public void addFirst(T elem){
         if (size == 0){
             initialiseList(elem);
         }
@@ -41,7 +39,7 @@ public class LinkedListDeque<Type> {
         size += 1;
     }
 
-    public void addLast(Type elem){
+    public void addLast(T elem){
         if (size == 0){
             initialiseList(elem);
         }
@@ -53,13 +51,13 @@ public class LinkedListDeque<Type> {
         size += 1;
     }
 
-    public Type removeFirst(){
+    public T removeFirst(){
         if (size == 0){
             System.out.println("Nothing happened...list is already empty");
             return null;
         }
         else {
-            Type removedElem = sentinel.next.item;
+            T removedElem = sentinel.next.item;
             sentinel.next = sentinel.next.next;
             size -= 1;
             return removedElem;
@@ -67,13 +65,13 @@ public class LinkedListDeque<Type> {
 
     }
 
-    public Type removeLast(){
+    public T removeLast(){
         if (size == 0){
             System.out.println("Nothing happened...list is already empty");
             return null;
         }
         else {
-            Type removedElem = sentinel.prev.item;
+            T removedElem = sentinel.prev.item;
             sentinel.prev = sentinel.prev.prev;
             size -= 1;
             return removedElem;
@@ -87,6 +85,33 @@ public class LinkedListDeque<Type> {
 
     public boolean isEmpty(){
         return size == 0;
+    }
+
+    public T get(int index){
+        if (index >= size){
+            System.out.println("Cannot retrieve item! Index is larger than list");
+            return null;
+        }
+        int counter = 0;
+        Node currentNode = sentinel;
+        while (counter <= index){
+            currentNode = currentNode.next;
+            counter += 1;
+        }
+        return currentNode.item;
+    }
+
+    public T getRecursive(int index){
+        return getRecursiveHelper(index, sentinel.next).item;
+    }
+
+    public Node getRecursiveHelper(int index, Node n){
+        if (index == 0){
+            return n;
+        }
+        else {
+            return getRecursiveHelper(index-1, n.next);
+        }
     }
 
     public void printDeque(){
