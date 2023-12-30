@@ -175,4 +175,19 @@ public class LinkedListDequeTest {
             x += 2;
         }
     }
+
+    @Test
+    public void equalsTest() {
+        LinkedListDeque<Integer> lld1 = new LinkedListDeque<Integer>();
+        LinkedListDeque<Integer> lld2 = new LinkedListDeque<Integer>();
+        lld1.addLast(2);
+        lld1.addLast(4);
+        lld1.addLast(6);
+
+        lld2.addLast(2);
+        lld2.addLast(4);
+        lld2.addLast(6);
+
+
+    }
 }

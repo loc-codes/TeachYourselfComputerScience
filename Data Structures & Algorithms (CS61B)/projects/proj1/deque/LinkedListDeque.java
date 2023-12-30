@@ -123,7 +123,22 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
             p = p.next;
         }
         System.out.println();
-        //System.out.println("printDeque called");
+    }
+
+    public boolean equals(Object other){
+        if (this == other) {return true;}
+        if (other instanceof LinkedListDeque otherLinkedList) {
+            if (otherLinkedList.size != this.size) {
+                return false;
+            }
+            for (int i = 0; i < size; i += 1){
+                if (this.get(i) != otherLinkedList.get(i)){
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     public Iterator<T> iterator(){

@@ -2,7 +2,9 @@ package deque;
 
 import java.util.Iterator;
 
-public class ArrayDeque <T> implements Deque<T> {
+import static org.junit.Assert.assertEquals;
+
+public class ArrayDeque <T> implements Deque<T>, Iterable<T> {
     private T[] items;
     private int size;
     private int capacity = 8;
@@ -25,7 +27,7 @@ public class ArrayDeque <T> implements Deque<T> {
         this.capacity = capacity;
     }
 
-    private int updateIndex(int index) {
+    public int updateIndex(int index) {
         if (index == capacity) {
             index = 0;
         }
@@ -33,16 +35,6 @@ public class ArrayDeque <T> implements Deque<T> {
             index = capacity - 1;
         }
         return index;
-    }
-
-    private int updateBackIndex(int backIndex) {
-        if (backIndex == capacity) {
-            backIndex = 0;
-        }
-        else if (backIndex == -1){
-            backIndex = capacity - 1;
-        }
-        return backIndex;
     }
 
     public void addFirst(T elem){
@@ -94,7 +86,9 @@ public class ArrayDeque <T> implements Deque<T> {
             System.out.println("Nothing happened...list is already empty");
             return null;
         }
-        else {
+        else if ((size < items.length / 4) && (size > 16)) {
+            resize(items.length / 4);
+        }
             T removedElem = getFirst();
             frontIndex = updateIndex(frontIndex + 1);
             items[frontIndex] = null;
@@ -102,12 +96,13 @@ public class ArrayDeque <T> implements Deque<T> {
             return removedElem;
         }
 
-    }
-
     public T removeLast(){
         if (size == 0){
             System.out.println("Nothing happened...list is already empty");
             return null;
+        }
+        else if ((size < items.length / 4) && (size >= 16)) {
+            resize(items.length / 4);
         }
         T removedElem = getLast();
         backIndex = updateIndex(backIndex -1);
@@ -117,10 +112,47 @@ public class ArrayDeque <T> implements Deque<T> {
     }
 
     public void printDeque(){
+        for (int i = 0; i < size; i += 1){
+            System.out.print(get(i) + " ");
+        }
+        System.out.println();
+    }
 
+    public boolean equals(Object other){
+        if (this == other) {return true;}
+        if (other instanceof ArrayDeque otherArray) {
+            if (otherArray.size != this.size) {
+                return false;
+            }
+            for (int i = 0; i < size; i += 1){
+                if (this.get(i) != otherArray.get(i)){
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     public Iterator<T> iterator(){
-        return null;
+        return new ArrayDeque.ArrayListIterator();
+    }
+
+    private class ArrayListIterator implements Iterator<T> {
+        private int index;
+
+        public ArrayListIterator() {
+            index = frontIndex + 1;
+        }
+
+        public boolean hasNext() {
+            return index != backIndex;
+        }
+
+        public T next() {
+            T returnItem = items[index];
+            index = updateIndex(index + 1);
+            return returnItem;
+        }
     }
 }
