@@ -1,5 +1,6 @@
 package deque;
 
+import edu.princeton.cs.algs4.StdRandom;
 import org.junit.Test;
 
 import java.util.Iterator;
@@ -128,5 +129,57 @@ public class ArrayDequeTest {
         testArray.addLast(4);
         testArray.addLast(6);
         testArray.printDeque();
+    }
+
+    @Test
+    public void equalsTest() {
+        ArrayDeque<Integer> ad1 = new ArrayDeque<Integer>();
+        ArrayDeque<Integer> ad2 = new ArrayDeque<Integer>();
+        ad1.addLast(2);
+        ad1.addLast(4);
+        ad1.addLast(6);
+
+        ad2.addLast(2);
+        ad2.addLast(4);
+        ad2.addLast(6);
+        assertTrue(ad1.equals(ad2));
+        ad2.removeLast();
+        assertFalse(ad1.equals(ad2));
+    }
+
+    @Test
+    public void randomizedTest() {
+        ArrayDeque<Integer> ad = new ArrayDeque<Integer>();
+
+        int N = 1000000;
+        for (int i = 0; i < N; i += 1) {
+            System.out.println("Operation " + i);
+            int operationNumber = StdRandom.uniform(0, 6);
+            if (operationNumber == 0) {
+                int randVal = StdRandom.uniform(0, 100);
+                ad.addFirst(randVal);
+                System.out.println("addLast(" + randVal + ")");
+            } else if (operationNumber == 1) {
+                int randVal = StdRandom.uniform(0, 100);
+                ad.addLast(randVal);
+                System.out.println("addLast(" + randVal + ")");
+            } else if (operationNumber == 2) {
+                System.out.println("isEmpty(): " + ad.isEmpty());
+            } else if (operationNumber == 3) {
+                int size = ad.size();
+                System.out.println("size: " + size);
+            } else if (operationNumber == 4 && !ad.isEmpty()) {
+                int first = ad.removeFirst();
+                System.out.println("removeFirst() removed " + first);
+            } else if (operationNumber == 5 && !ad.isEmpty()) {
+                int last = ad.removeLast();
+                System.out.println("removeLast() removed " + last);
+            } else if (operationNumber == 6 && !ad.isEmpty()) {
+                int size = ad.size();
+                int randVal = StdRandom.uniform(0, size);
+                int get = ad.get(ad.size() - 1);
+                System.out.println("get(" + randVal + ") = " + get);
+            }
+        }
     }
 }

@@ -18,10 +18,19 @@ public class ArrayDeque <T> implements Deque<T>, Iterable<T> {
     }
 
     private void resize(int capacity) {
-        T[] a = (T []) new Object[capacity];
-        System.arraycopy(items,frontIndex+1,  a, 0, size-frontIndex-1);
-        System.arraycopy(items,0,  a, size-frontIndex-1, frontIndex+1);
-        items = a;
+        T[] resizedArray = (T []) new Object[capacity];
+        // This variable accounts for "wrapping" of front index. Eg: if front index = 8, capacity = 8, oneAfter will be 0 not 9
+        int oneAfterFrontIndex = updateIndex(frontIndex + 1);
+        //Handles resizing down of lists that don't wrap eg: frontIndex = 17, backIndex = 49, capacity = 128.
+        if (backIndex - frontIndex == capacity) {
+            System.arraycopy(items, oneAfterFrontIndex,  resizedArray, 0, size);
+        }
+        // Handles up and down sizing of all other lists, including wrapped lists
+        else {
+            System.arraycopy(items, oneAfterFrontIndex,  resizedArray, 0, this.capacity-oneAfterFrontIndex);
+            System.arraycopy(items,0,  resizedArray, this.capacity-oneAfterFrontIndex, backIndex);
+        }
+        items = resizedArray;
         frontIndex = capacity - 1;
         backIndex = size;
         this.capacity = capacity;
@@ -86,7 +95,7 @@ public class ArrayDeque <T> implements Deque<T>, Iterable<T> {
             System.out.println("Nothing happened...list is already empty");
             return null;
         }
-        else if ((size < items.length / 4) && (size > 16)) {
+        else if ((size < items.length / 4) && (size >= 16)) {
             resize(items.length / 4);
         }
             T removedElem = getFirst();

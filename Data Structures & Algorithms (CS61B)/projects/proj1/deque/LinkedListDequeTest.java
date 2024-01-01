@@ -1,5 +1,7 @@
 package deque;
 
+import edu.princeton.cs.algs4.StdRandom;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Iterator;
@@ -187,7 +189,49 @@ public class LinkedListDequeTest {
         lld2.addLast(2);
         lld2.addLast(4);
         lld2.addLast(6);
+        assertTrue(lld1.equals(lld2));
+        lld2.removeLast();
+        assertFalse(lld1.equals(lld2));
+    }
 
+    @Test
+    public void randomizedTest() {
+        LinkedListDeque<Integer> lld = new LinkedListDeque<Integer>();
 
+        int N = 50000;
+        for (int i = 0; i < N; i += 1) {
+            int operationNumber = StdRandom.uniform(0, 6);
+            if (operationNumber == 0) {
+                int randVal = StdRandom.uniform(0, 100);
+                lld.addFirst(randVal);
+                System.out.println("addLast(" + randVal + ")");
+            }
+            else if (operationNumber == 1) {
+                int randVal = StdRandom.uniform(0, 100);
+                lld.addLast(randVal);
+                System.out.println("addLast(" + randVal + ")");
+            }
+            else if (operationNumber == 2) {
+                System.out.println("isEmpty(): " + lld.isEmpty());
+            }
+            else if (operationNumber == 3) {
+                int size = lld.size();
+                System.out.println("size: " + size);
+            }
+            else if (operationNumber == 4 && !lld.isEmpty()) {
+                int first = lld.removeFirst();
+                System.out.println("removeFirst() removed " + first);
+            }
+            else if (operationNumber == 5 && !lld.isEmpty()) {
+                int last = lld.removeLast();
+                System.out.println("removeLast() removed " + last);
+            }
+            else if (operationNumber == 6 && !lld.isEmpty()) {
+                int size = lld.size();
+                int randVal = StdRandom.uniform(0, size);
+                int get = lld.get(lld.size() -1);
+                System.out.println("get(" + randVal + ") = " + get);
+            }
+        }
     }
 }
