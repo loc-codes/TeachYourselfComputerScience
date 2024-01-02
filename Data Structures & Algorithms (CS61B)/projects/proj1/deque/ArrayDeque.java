@@ -1,12 +1,9 @@
 package deque;
-
 import java.util.Iterator;
 
-import static org.junit.Assert.assertEquals;
-
 public class ArrayDeque <T> implements Deque<T>, Iterable<T> {
-    private T[] items;
-    private int size;
+    T[] items;
+    public int size;
     private int capacity = 8;
     public int frontIndex = 4;
     public int backIndex = 5;
@@ -53,7 +50,6 @@ public class ArrayDeque <T> implements Deque<T>, Iterable<T> {
         items[frontIndex] = elem;
         size += 1;
         frontIndex = updateIndex(frontIndex -1);
-        return;
     }
 
     public void addLast(T elem){
