@@ -4,12 +4,13 @@ import java.util.Iterator;
 public class ArrayDeque <T> implements Deque<T>, Iterable<T> {
     public int size;
     T[] items;
-    private int capacity = 8;
+    private int capacity;
     public int frontIndex = 4;
     public int backIndex = 5;
 
     // Creates an empty list
     public ArrayDeque(){
+        this.capacity = 8;
         items = (T []) new Object[capacity];
         size = 0;
     }
