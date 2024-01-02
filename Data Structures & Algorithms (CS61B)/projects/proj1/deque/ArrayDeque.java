@@ -2,8 +2,8 @@ package deque;
 import java.util.Iterator;
 
 public class ArrayDeque <T> implements Deque<T>, Iterable<T> {
-    T[] items;
     public int size;
+    T[] items;
     private int capacity = 8;
     public int frontIndex = 4;
     public int backIndex = 5;
@@ -13,6 +13,7 @@ public class ArrayDeque <T> implements Deque<T>, Iterable<T> {
         items = (T []) new Object[capacity];
         size = 0;
     }
+
 
     private void resize(int capacity) {
         T[] resizedArray = (T []) new Object[capacity];
@@ -43,6 +44,7 @@ public class ArrayDeque <T> implements Deque<T>, Iterable<T> {
         return index;
     }
 
+    @Override
     public void addFirst(T elem){
         if (size == capacity) {
             resize(capacity * 2);
@@ -52,6 +54,7 @@ public class ArrayDeque <T> implements Deque<T>, Iterable<T> {
         frontIndex = updateIndex(frontIndex -1);
     }
 
+    @Override
     public void addLast(T elem){
         if (size == capacity) {
             resize(capacity * 2);
@@ -62,6 +65,7 @@ public class ArrayDeque <T> implements Deque<T>, Iterable<T> {
     }
 
 
+    @Override
     public T get(int i) {
         int getIndex = frontIndex+i+1;
         if (getIndex >= capacity) {
@@ -73,19 +77,17 @@ public class ArrayDeque <T> implements Deque<T>, Iterable<T> {
     public T getFirst() {
         return get(0);
     }
-
     public T getLast() {
         return get(size-1);
     }
 
+
+    @Override
     public int size() {
         return size;
     }
 
-    public boolean isEmpty(){
-        return size == 0;
-    }
-
+    @Override
     public T removeFirst(){
         if (size == 0){
             System.out.println("Nothing happened...list is already empty");
@@ -101,6 +103,7 @@ public class ArrayDeque <T> implements Deque<T>, Iterable<T> {
             return removedElem;
         }
 
+    @Override
     public T removeLast(){
         if (size == 0){
             System.out.println("Nothing happened...list is already empty");
@@ -116,6 +119,7 @@ public class ArrayDeque <T> implements Deque<T>, Iterable<T> {
         return removedElem;
     }
 
+    @Override
     public void printDeque(){
         for (int i = 0; i < size; i += 1){
             System.out.print(get(i) + " ");
@@ -123,6 +127,7 @@ public class ArrayDeque <T> implements Deque<T>, Iterable<T> {
         System.out.println();
     }
 
+    @Override
     public boolean equals(Object other){
         if (this == other) {return true;}
         if (other instanceof ArrayDeque otherArray) {
@@ -139,6 +144,7 @@ public class ArrayDeque <T> implements Deque<T>, Iterable<T> {
         return false;
     }
 
+    @Override
     public Iterator<T> iterator(){
         return new ArrayDeque.ArrayListIterator();
     }

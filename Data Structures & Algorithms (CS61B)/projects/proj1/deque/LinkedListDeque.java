@@ -30,6 +30,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         sentinel.prev = initialNode;
     }
 
+    @Override
     public void addFirst(T elem){
         if (size == 0){
             initialiseList(elem);
@@ -42,6 +43,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         size += 1;
     }
 
+    @Override
     public void addLast(T elem){
         if (size == 0){
             initialiseList(elem);
@@ -54,6 +56,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         size += 1;
     }
 
+    @Override
     public T removeFirst(){
         if (size == 0){
             System.out.println("Nothing happened...list is already empty");
@@ -72,6 +75,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
 
     }
 
+    @Override
     public T removeLast(){
         if (size == 0){
             System.out.println("Nothing happened...list is already empty");
@@ -90,14 +94,8 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
 
     }
 
-    public int size(){
-        return size;
-    }
 
-    public boolean isEmpty(){
-        return size == 0;
-    }
-
+    @Override
     public T get(int index){
         if (index >= size){
             System.out.println("Cannot retrieve item! Index is larger than list");
@@ -125,6 +123,12 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         }
     }
 
+    @Override
+    public int size() {
+        return size;
+    }
+
+    @Override
     public void printDeque(){
         Node p = sentinel.next;
         while (p.item != null){
@@ -134,6 +138,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         System.out.println();
     }
 
+    @Override
     public boolean equals(Object other){
         if (this == other) {return true;}
         if (other instanceof LinkedListDeque otherLinkedList) {
@@ -150,6 +155,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         return false;
     }
 
+    @Override
     public Iterator<T> iterator(){
         return new LinkedListIterator();
     }
