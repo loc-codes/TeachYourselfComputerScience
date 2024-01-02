@@ -23,17 +23,18 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
         int oneAfterFrontIndex = updateIndex(frontIndex + 1);
         //Handles resizing down of lists that don't wrap
         // eg: frontIndex = 17, backIndex = 49, capacity = 128.
-        if (backIndex - frontIndex == newCapacity) {
+        if (backIndex - frontIndex == newCapacity || (frontIndex + 1 == capacity && backIndex == size)) {
             System.arraycopy(items, oneAfterFrontIndex, resizedArray, 0, size);
-        } else {
+        }
+        else {
             //Handles up and down sizing of all other lists
             System.arraycopy(items, oneAfterFrontIndex,  resizedArray, 0, this.capacity - oneAfterFrontIndex);
             System.arraycopy(items, 0,  resizedArray, this.capacity - oneAfterFrontIndex, backIndex);
         }
         items = resizedArray;
-        frontIndex = capacity - 1;
+        frontIndex = newCapacity - 1;
         backIndex = size;
-        this.capacity = capacity;
+        this.capacity = newCapacity;
     }
 
     public int updateIndex(int index) {
@@ -91,9 +92,8 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     @Override
     public T removeFirst() {
         if (size == 0) {
-            System.out.println("Nothing happened...list is already empty");
             return null;
-        } else if ((size < items.length / 4) && (size >= 16)) {
+        } else if ((size < items.length / 4) && (items.length >= 16)) {
             resize(items.length / 4);
         }
 
@@ -107,9 +107,8 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     @Override
     public T removeLast() {
         if (size == 0) {
-            System.out.println("Nothing happened...list is already empty");
             return null;
-        } else if ((size < items.length / 4) && (size >= 16)) {
+        } else if ((size < items.length / 4) && (items.length >= 16)) {
             resize(items.length / 4);
         }
 

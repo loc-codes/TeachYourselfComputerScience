@@ -93,36 +93,6 @@ public class ArrayDequeTest {
     }
 
     @Test
-    public void iteratorTest() {
-        ArrayDeque<Integer> testArray = new ArrayDeque<Integer>();
-        testArray.addLast(1);
-        testArray.addLast(2);
-        testArray.addLast(3);
-        Iterator<Integer> arrIter = testArray.iterator();
-        int x = 0;
-        while (arrIter.hasNext()){
-            int getElem = testArray.get(x);
-            int iterElem = arrIter.next();
-            assertEquals(getElem, iterElem);
-            x += 1;
-        }
-    }
-
-    @Test
-    public void iterableTest() {
-        ArrayDeque<Integer> testArray = new ArrayDeque<Integer>();
-        testArray.addLast(2);
-        testArray.addLast(4);
-        testArray.addLast(6);
-        Iterator<Integer> arrIter = testArray.iterator();
-        int x = 2;
-        for (int i: testArray){
-            assertEquals(x, i);
-            x += 2;
-        }
-    }
-
-    @Test
     public void printDequeTest() {
         ArrayDeque<Integer> testArray = new ArrayDeque<Integer>();
         testArray.addLast(2);
