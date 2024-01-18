@@ -135,7 +135,7 @@ One additional property
     - Avoid arms length recursion
   - Deletion is more challenging - use Hibbard deletion
 
-## Tips for BST Labe
+## Tips for BST Lab
 - Code from class was naked Recursion, you BST Map will not be
 - For each public method
   - put(K key, V value), create private recursive method put(K key, V value, Node n)
