@@ -69,7 +69,6 @@ public class BSTMap<K extends Comparable<K>, V>  implements Map61B<K, V> {
      */
     @Override
     public V get(K key) {
-        System.out.println("get");
         return getHelper(key, root);
     }
 
@@ -91,15 +90,13 @@ public class BSTMap<K extends Comparable<K>, V>  implements Map61B<K, V> {
 
     /* Returns the number of key-value mappings in this map. */
     @Override
-    public int size(){
-        System.out.println("size");
+    public int size() {
         return size;
     }
 
     /* Associates the specified value with the specified key in this map. */
     @Override
-    public void put(K key, V value){
-        System.out.println("put");
+    public void put(K key, V value) {
         if (size() == 0) {
             root = new BSTNode(key, value, null, null);
         }
@@ -123,7 +120,6 @@ public class BSTMap<K extends Comparable<K>, V>  implements Map61B<K, V> {
     }
 
     public void printInOrder() {
-        System.out.println("printInOrder");
         throw new UnsupportedOperationException();
     }
 
@@ -131,7 +127,6 @@ public class BSTMap<K extends Comparable<K>, V>  implements Map61B<K, V> {
      * If you don't implement this, throw an UnsupportedOperationException. */
     @Override
     public Set<K> keySet(){
-        System.out.println("keySet");
         throw new UnsupportedOperationException();
     }
 
@@ -140,7 +135,6 @@ public class BSTMap<K extends Comparable<K>, V>  implements Map61B<K, V> {
      * UnsupportedOperationException. */
     @Override
     public V remove(K key){
-        System.out.println("remove");
         throw new UnsupportedOperationException();
     }
 
@@ -149,7 +143,6 @@ public class BSTMap<K extends Comparable<K>, V>  implements Map61B<K, V> {
      * throw an UnsupportedOperationException.*/
     @Override
     public V remove(K key, V value){
-        System.out.println("remove");
         throw new UnsupportedOperationException();
     };
 }
