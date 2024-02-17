@@ -1,7 +1,11 @@
 package gitlet;
+import static gitlet.Utils.*;
+import java.io.File;
+import static gitlet.CommitUtils.*;
 
 // TODO: any imports you need here
 
+import java.io.Serializable;
 import java.util.Date; // TODO: You'll likely use this in this class
 
 /** Represents a gitlet commit object.
@@ -10,7 +14,7 @@ import java.util.Date; // TODO: You'll likely use this in this class
  *
  *  @author TODO
  */
-public class Commit {
+public class Commit implements Serializable, Dumpable {
     /**
      * TODO: add instance variables here.
      *
@@ -21,6 +25,27 @@ public class Commit {
 
     /** The message of this Commit. */
     private String message;
+    private String timestamp;
+    public String commitHash;
+    private File files;
 
-    /* TODO: fill in the rest of this class. */
+    public Commit(String message) {
+        this.message = message;
+        this.timestamp = createInitialCommitTimestape();
+        this.commitHash = sha1(this.message, this.timestamp);
+    }
+
+    public Commit(String message, File files) {
+        this.message = message;
+        this.timestamp = createInitialCommitTimestape();
+        this.files = files;
+        this.commitHash = sha1(this.message, this.timestamp, this.files);
+    }
+
+    @Override
+    public void dump() {
+        System.out.println("commit " + commitHash);
+        System.out.println("Date: " + timestamp);
+        System.out.println(message);
+    }
 }
