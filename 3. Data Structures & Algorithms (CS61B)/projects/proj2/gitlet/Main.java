@@ -16,7 +16,12 @@ public class Main {
                 Repository.init();
                 break;
             case "add":
-                // TODO: handle the `add [filename]` command
+                if (args.length < 2) {
+                    System.out.println("Incorrect operands.");
+                    System.exit(0);
+                }
+                String filename = args[1];
+                Repository.add(filename);
                 break;
             // TODO: FILL THE REST IN
         }
