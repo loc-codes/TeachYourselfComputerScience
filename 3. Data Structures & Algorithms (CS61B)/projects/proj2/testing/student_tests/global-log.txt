@@ -1,0 +1,20 @@
+>>> init
+<<<
++ a.txt AAA
+>>> add a.txt
+<<<
+>>> commit "First"
+<<<
+>>> branch otherbranch
+<<<
+>>> checkout otherbranch
+<<<
+Switched to branch 'otherbranch'.
++ b.txt BBB
+>>> add b.txt
+<<<
+>>> commit "Second"
+<<<
+>>> global-log
+<<<*
+(See the format in the provided examples)

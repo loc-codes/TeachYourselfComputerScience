@@ -1,0 +1,3 @@
+>>> init
+<<<
+Initialized a Gitlet version-control system in the current directory.

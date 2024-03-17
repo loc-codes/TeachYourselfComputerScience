@@ -1,74 +1,78 @@
 package gitlet;
-import static gitlet.Utils.*;
-import java.io.File;
-import static gitlet.CommitUtils.*;
-
-// TODO: any imports you need here
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date; // TODO: You'll likely use this in this class
+import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
+import static gitlet.Utils.*;
 
-/** Represents a gitlet commit object.
- *  TODO: It's a good idea to give a description here of what else this Class
- *  does at a high level.
- *
- *  @author TODO
- */
-public class Commit implements Dumpable, RepositoryObject {
-    /**
-     * TODO: add instance variables here.
-     *
-     * List all instance variables of the Commit class here with a useful
-     * comment above them describing what that variable represents and how that
-     * variable is used. We've provided one example for `message`.
-     */
-
+/** Represents a gitlet commit object. */
+public class Commit implements Serializable {
     /** The message of this Commit. */
     private String message;
-    private String timestamp;
-    public String sha1Hash;
-    public List<String> blobHashs;
-    public HashMap<String, File> blobMap;
-    private String parentId;
-
-//    Having our metadata consist only of a timestamp and log message.
-//    A commit, therefore, will consist of:
-//    a log message,
-//    timestamp,
-//    a mapping of file names to blob references,
-//    a parent reference,
-//    and (for merges) a second parent reference.
-
+    /** The timestamp when this Commit was made. */
+    private Date commitDate;
+    /** The SHA-1 hash of this Commit. */
+    private String sha1Hash;
+    /** The mapping of file names to blob hashes. */
+    private Map<String, String> blobs;
+    /** The SHA-1 hash of this Commit's parent. */
+    private String parentHash;
 
     // Constructor for initial commit
     public Commit(String message) {
         this.message = message;
-        this.timestamp = createInitialCommitTimestape();
-        this.sha1Hash = sha1(this.message, this.timestamp);
-        this.parentId = null;
+        this.commitDate = new Date(0); // Unix epoch timestamp
+        this.blobs = new HashMap<>();
+        this.parentHash = null;
+        this.sha1Hash = sha1(this.message, this.commitDate.toString());
     }
 
-    // Constructor for all other commits
-    public Commit(String message, ArrayList<String> blobs, String parentId) {
+    // Constructor for non-initial commits
+    public Commit(String message, Date commitDate, String parentHash, Map<String, String> blobs) {
         this.message = message;
-        this.timestamp = createInitialCommitTimestape();
-        this.parentId = parentId;
-        this.blobHashs = blobs;
-        this.blobMap = createBlobMap();
-        this.sha1Hash = sha1(this.message, this.timestamp, this.blobHashs);
+        this.commitDate = commitDate;
+        this.parentHash = parentHash;
+        this.blobs = new HashMap<>(blobs); // Create a copy of the blobs map
+        this.sha1Hash = sha1(this.message, this.commitDate.toString(), this.parentHash, this.blobs.toString());
     }
 
-    private HashMap<String, File> createBlobMap() {
-        return null;
+    // Getters and setters as needed
+    public String getMessage() {
+        return message;
     }
 
-    @Override
+    public Date getCommitDate() {
+        return commitDate;
+    }
+
+    public String getSha1Hash() {
+        return sha1Hash;
+    }
+
+    public Map<String, String> getBlobs() {
+        return blobs;
+    }
+
+    public String getParentHash() {
+        return parentHash;
+    }
+
+    public void setBlobs(Map<String, String> blobs) {
+        this.blobs = blobs;
+    }
+
+    // Helper methods
+    public String getBlobHash(String fileName) {
+        return blobs.get(fileName);
+    }
+
+    // This method is used for the serialization of Commit objects.
+    // Override this method as needed for the project requirements.
     public void dump() {
-        System.out.println("commit " + sha1Hash);
-        System.out.println("Date: " + timestamp);
-        System.out.println(message);
+        System.out.println("Commit: " + sha1Hash);
+        System.out.println("Date: " + commitDate);
+        System.out.println("Message: " + message);
+        System.out.println("Parent: " + parentHash);
     }
 }

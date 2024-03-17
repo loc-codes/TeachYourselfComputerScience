@@ -1,0 +1,16 @@
+>>> init
+<<<
++ one.txt 1
+>>> add one.txt
+<<<
+>>> commit "First"
+<<<
++ two.txt 2
+>>> add two.txt
+>>> commit "Second"
+<<<
+- one.txt
+>>> reset <ID of First Commit>
+<<<
+Checked out commit <ID of First Commit>.
+= one.txt 1

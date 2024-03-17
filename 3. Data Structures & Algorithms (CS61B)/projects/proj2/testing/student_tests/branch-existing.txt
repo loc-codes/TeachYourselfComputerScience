@@ -1,0 +1,7 @@
+>>> init
+<<<
+>>> branch test
+<<<
+>>> branch test
+<<<
+A branch named 'test' already exists.

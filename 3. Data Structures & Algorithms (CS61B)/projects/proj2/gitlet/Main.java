@@ -23,7 +23,13 @@ public class Main {
                 String filename = args[1];
                 Repository.add(filename);
                 break;
-            // TODO: FILL THE REST IN
+            case "commit":
+                if (args.length < 2) {
+                    System.out.println("Incorrect operands.");
+                    System.exit(0);
+                }
+                String message = args[1];
+                Repository.commit(message);
         }
     }
 }

@@ -1,0 +1,10 @@
+>>> init
+<<<
++ x.txt X
+>>> add x.txt
+<<<
+>>> commit "Message X"
+<<<
+>>> find "Message X"
+<<<
+<commit ID>

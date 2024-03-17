@@ -1,0 +1,6 @@
+>>> init
+<<<
+>>> branch test
+<<<
+>>> rm-branch test
+<<<

@@ -1,0 +1,24 @@
+>>> init
+<<<
++ a.txt A
+>>> add a.txt
+<<<
+>>> commit "First"
+<<<
+>>> branch other
+<<<
+>>> checkout other
+<<<
+Switched to branch 'other'.
++ a.txt B
+>>> add a.txt
+<<<
+>>> commit "Other change"
+<<<
+>>> checkout master
+<<<
+Switched to branch 'master'.
+>>> merge other
+<<<
+Merged branch 'other' into 'master'.
+= a.txt B

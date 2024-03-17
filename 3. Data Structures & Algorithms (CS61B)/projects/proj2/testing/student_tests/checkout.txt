@@ -1,0 +1,22 @@
+>>> init
+<<<
++ file.txt Initial
+>>> add file.txt
+<<<
+>>> commit "First"
+<<<
+>>> branch feature
+<<<
+>>> checkout feature
+<<<
+Switched to branch 'feature'.
+- file.txt
++ file.txt Feature content
+>>> add file.txt
+<<<
+>>> commit "Feature change"
+<<<
+>>> checkout master
+<<<
+Switched to branch 'master'.
+= file.txt Initial
