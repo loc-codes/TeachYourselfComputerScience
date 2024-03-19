@@ -1,5 +1,0 @@
->>> init
-<<<
-+ newfile.txt Hi there!
->>> add newfile.txt
-<<<

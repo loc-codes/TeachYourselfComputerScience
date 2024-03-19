@@ -1,5 +1,0 @@
->>> init
-<<<
->>> rm-branch fakeBranch
-<<<
-A branch named 'fakeBranch' does not exist.

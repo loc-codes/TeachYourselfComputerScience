@@ -1,9 +1,8 @@
 package gitlet;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+
 import static gitlet.Utils.*;
 
 /** Represents a gitlet commit object. */
@@ -17,14 +16,15 @@ public class Commit implements Serializable {
     /** The mapping of file names to blob hashes. */
     private Map<String, String> blobs;
     /** The SHA-1 hash of this Commit's parent. */
-    private String parentHash;
+    private List<String> parentHashs;
 
     // Constructor for initial commit
     public Commit(String message) {
         this.message = message;
         this.commitDate = new Date(0); // Unix epoch timestamp
         this.blobs = new HashMap<>();
-        this.parentHash = null;
+        this.parentHashs = new ArrayList<>();
+        this.parentHashs.add(null);
         this.sha1Hash = sha1(this.message, this.commitDate.toString());
     }
 
@@ -32,9 +32,10 @@ public class Commit implements Serializable {
     public Commit(String message, Date commitDate, String parentHash, Map<String, String> blobs) {
         this.message = message;
         this.commitDate = commitDate;
-        this.parentHash = parentHash;
+        this.parentHashs = new ArrayList<>();
+        this.parentHashs.add(parentHash);
         this.blobs = new HashMap<>(blobs); // Create a copy of the blobs map
-        this.sha1Hash = sha1(this.message, this.commitDate.toString(), this.parentHash, this.blobs.toString());
+        this.sha1Hash = sha1(this.message, this.commitDate.toString(), this.getFirstParent(), this.blobs.toString());
     }
 
     // Getters and setters as needed
@@ -54,8 +55,12 @@ public class Commit implements Serializable {
         return blobs;
     }
 
-    public String getParentHash() {
-        return parentHash;
+    public String getFirstParent() {
+        return parentHashs.get(0);
+    }
+
+    public List<String> getParentHashs() {
+        return parentHashs;
     }
 
     public void setBlobs(Map<String, String> blobs) {
@@ -73,6 +78,7 @@ public class Commit implements Serializable {
         System.out.println("Commit: " + sha1Hash);
         System.out.println("Date: " + commitDate);
         System.out.println("Message: " + message);
-        System.out.println("Parent: " + parentHash);
+        System.out.println("First Parent: " + getFirstParent());
+        System.out.println("Blobs" + blobs);
     }
 }

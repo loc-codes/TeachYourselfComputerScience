@@ -2,9 +2,8 @@ package gitlet;
 
 
 import java.io.File;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Date;
+import java.util.*;
+
 import static gitlet.Utils.*;
 
 /** Represents a gitlet repository.
@@ -13,8 +12,6 @@ import static gitlet.Utils.*;
  */
 public class Repository {
     /**
-     *
-     *
      * List all instance variables of the Repository class here with a useful
      * comment above them describing what that variable represents and how that
      * variable is used. We've provided two examples for you.
@@ -35,101 +32,10 @@ public class Repository {
     public static final File HEAD_FILE = join(GITLET_DIR, "HEAD");
 
 
-
-
-    public static void init() {
-        if (GITLET_DIR.exists()) {
-            System.out.println("A Gitlet version-control system already exists in the current directory.");
-            return; // Early return if the system already exists
-        }
-
-        // Create the initial structure for the Gitlet repository
-        createInitialDirectoryStructure();
-
-        // Create the initial commit with no files and the message "initial commit"
-        Commit initialCommit = createInitialCommit();
-
-        // Save the initial commit to the commit directory
-        saveInitialCommit(initialCommit);
-
-        // Update the HEAD and master branch to point to the initial commit
-        updateReferences(initialCommit);
-    }
-
-    /**
-     * Creates the initial directory structure for a Gitlet repository.
-     */
-    private static void createInitialDirectoryStructure() {
-        GITLET_DIR.mkdir();
-        STAGING_AREA.mkdir();
-        BLOBS_DIR.mkdir();
-        COMMITS_DIR.mkdir();
-        join(GITLET_DIR, "refs").mkdir(); // Directory for branch references
-        join(GITLET_DIR, "refs", "heads").mkdir(); // Directory for actual branches
-    }
-
-    /**
-     * Creates the initial commit.
-     * @return The initial commit object.
-     */
-    private static Commit createInitialCommit() {
-        // Using the Unix Epoch as the timestamp for the initial commit
-        return new Commit("initial commit");
-    }
-
-    /**
-     * Saves the initial commit to the commit directory.
-     * @param initialCommit The initial commit object to save.
-     */
-    private static void saveInitialCommit(Commit initialCommit) {
-        File commitFile = join(COMMITS_DIR, initialCommit.getSha1Hash());
-        writeObject(commitFile, initialCommit);
-    }
-
-    /**
-     * Updates the HEAD and master references to point to the initial commit.
-     * @param initialCommit The initial commit object.
-     */
-    private static void updateReferences(Commit initialCommit) {
+    /** Utils **/
+    private static void updateReferences(Commit commit) {
         writeContents(HEAD_FILE, "refs/heads/master"); // this writes a string with the directory address
-        File masterFile = MASTER_BRANCH;
-        writeContents(masterFile, initialCommit.getSha1Hash());
-    }
-
-    public static void add(String fileName) {
-        File file = new File(CWD, fileName);
-        if (!file.exists()) {
-            System.out.println("File does not exist.");
-            return;
-        }
-
-        // Compute the file's SHA-1 hash
-        String fileHash = sha1(readContents(file));
-
-        // Retrieve the current commit and its blobs
-        Commit currentCommit = getCurrentCommit();
-        currentCommit.dump();
-
-        // Check if the current version of the file is identical to the version in the current commit
-        if (currentCommit.getBlobHash(fileName) != null && currentCommit.getBlobHash(fileName).equals(fileHash)) {
-            // File has not changed, remove it from staging area if it's there
-            unstageFile(fileName);
-            return;
-        }
-
-        // Stage the file for addition
-        stageFile(file);
-    }
-
-    /**
-     * Gets the current commit.
-     * @return The current commit object.
-     */
-    private static Commit getCurrentCommit() {
-        String currentBranch = readContentsAsString(HEAD_FILE);
-        String currentCommitHash = readContentsAsString(join(GITLET_DIR, currentBranch));
-        File currentCommitFile = join(COMMITS_DIR, currentCommitHash);
-        return readObject(currentCommitFile, Commit.class);
+        writeContents(MASTER_BRANCH, commit.getSha1Hash());
     }
 
     /**
@@ -152,11 +58,113 @@ public class Repository {
         }
     }
 
+    /** Gets the commit with a given hash */
+    private static Commit getCommit(String commitHash) {
+        if (commitHash == null) {
+            return null;
+        }
+        File commitPath = join(COMMITS_DIR, commitHash);
+        boolean commitPathExists = commitPath.exists();
+        if (commitPathExists) {
+            return readObject(commitPath, Commit.class);
+        }
+        return null;
+    }
+
+    /** Gets the head commit */
+    private static Commit getCurrentCommit() {
+        String currentBranch = readContentsAsString(HEAD_FILE);
+        String currentCommitHash = readContentsAsString(join(GITLET_DIR, currentBranch));
+        return getCommit(currentCommitHash);
+    }
+
+    private static String formatDate(Date date) {
+        Formatter f = new Formatter();
+        f.format("Date: %tc", date);
+        return f.toString();
+    }
+
+    private static String formatParents(List<String> parents) {
+        if (parents.size() > 1) {
+            String firstParent = parents.get(0).substring(0,6);
+            String secondParent = parents.get(1).substring(0,6);
+            return "Merge: " + firstParent + " " + secondParent + "\n";
+        }
+        return "";
+    }
+
+    private static String buildCommitMessage(Commit commit) {
+        StringBuilder commitMessage = new StringBuilder();
+        List<String> parents = commit.getParentHashs();
+        String id = commit.getSha1Hash();
+        Date date = commit.getCommitDate();
+        String message = commit.getMessage();
+
+        commitMessage.append(formatParents(parents));
+        commitMessage.append("===\ncommit ").append(id).append("\n");;
+        commitMessage.append(formatDate(date)).append("\n");
+        commitMessage.append(message).append("\n\n");
+        return String.valueOf(commitMessage);
+    }
+
+    /** MAIN COMMANDS **/
+    public static void init() {
+        if (GITLET_DIR.exists()) {
+            System.out.println("A Gitlet version-control system already exists in the current directory.");
+            return;
+        }
+
+        // Create the initial structure for the Gitlet repository
+        GITLET_DIR.mkdir();
+        STAGING_AREA.mkdir();
+        BLOBS_DIR.mkdir();
+        COMMITS_DIR.mkdir();
+        join(GITLET_DIR, "refs").mkdir(); // Directory for branch references
+        join(GITLET_DIR, "refs", "heads").mkdir(); // Directory for actual branches
+
+        // Create the initial commit with no files and the message "initial commit"
+        Commit initialCommit = new Commit("initial commit");
+
+        // Save the initial commit to the commit directory
+        File commitFile = join(COMMITS_DIR, initialCommit.getSha1Hash());
+        writeObject(commitFile, initialCommit);
+
+        // Update the HEAD and master branch to point to the initial commit
+        updateReferences(initialCommit);
+    }
+
+
+    public static void add(String fileName) {
+        File file = new File(CWD, fileName);
+        if (!file.exists()) {
+            System.out.println("File does not exist.");
+            return;
+        }
+
+        // Compute the file's SHA-1 hash
+        String fileHash = sha1(readContents(file));
+
+        // Retrieve the current commit and its blobs
+        Commit currentCommit = getCurrentCommit();
+
+        // Check if the current version of the file is identical to the version in the current commit
+        if (currentCommit.getBlobHash(fileName) != null && currentCommit.getBlobHash(fileName).equals(fileHash)) {
+            // File has not changed, remove it from staging area if it's there
+            unstageFile(fileName);
+            return;
+        }
+
+        // Stage the file for addition
+        stageFile(file);
+    }
+
+
     public static void commit(String message) {
         if (message == null || message.isEmpty()) {
             System.out.println("Please enter a commit message.");
             return;
         }
+
 
         File[] stagedFiles = STAGING_AREA.listFiles();
         if (stagedFiles == null || stagedFiles.length == 0) {
@@ -167,16 +175,30 @@ public class Repository {
         Commit currentCommit = getCurrentCommit();
         Map<String, String> updatedBlobs = new HashMap<>(currentCommit.getBlobs()); // Clone current blobs
 
+        boolean hasStagedAdditions = false;
+        boolean hasStagedRemovals = false;
         // Update blobs with staged files
         for (File file : stagedFiles) {
             String fileName = file.getName();
             String fileHash = sha1(readContents(file));
-            updatedBlobs.put(fileName, fileHash);
-            // Copy the file to the blobs directory
-            File blobFile = join(BLOBS_DIR, fileHash);
-            writeContents(blobFile, readContents(file));
-            // Clear staging area
+            if (fileName.startsWith("remove_")) {
+                // If the file is marked for removal, remove it from the updated blobs
+                String originalFileName = fileName.substring("remove_".length());
+                updatedBlobs.remove(originalFileName);
+                hasStagedRemovals = true;
+            }
+            else {
+                hasStagedAdditions = true;
+                updatedBlobs.put(fileName, fileHash);
+                File blobFile = join(BLOBS_DIR, fileHash);
+                writeContents(blobFile, readContents(file));
+            }
             file.delete();
+        }
+
+        if (!hasStagedAdditions && !hasStagedRemovals) {
+            System.out.println("No changes added to the commit.");
+            return;
         }
 
         // Create a new commit with the updated blobs
@@ -189,5 +211,62 @@ public class Repository {
         updateReferences(newCommit);
     }
 
+    public static void rm(String fileName) {
+        File fileToRemove = join(STAGING_AREA, fileName);
+        Commit currentCommit = getCurrentCommit();
+        boolean isStaged = fileToRemove.exists();
+        boolean isTracked = currentCommit.getBlobs().containsKey(fileName);
 
+        if (!isStaged && !isTracked) {
+            System.out.println("No reason to remove the file.");
+            return;
+        }
+
+        if (isStaged) {
+            // If the file is currently staged, unstage it.
+            unstageFile(fileName);
+        }
+
+
+    }
+
+    public static void log() {
+        StringBuilder logMessage = new StringBuilder();
+        Commit currentCommit = getCurrentCommit();
+        while (currentCommit != null) {
+            String commitLog = buildCommitMessage(currentCommit);
+            logMessage.append(commitLog);
+            String firstParent = currentCommit.getFirstParent();
+            currentCommit = getCommit(firstParent);
+        }
+        System.out.println(logMessage);
+    }
+
+    public static void globalLog() {
+        StringBuilder logMessage = new StringBuilder();
+        List<String> fileNames = plainFilenamesIn(COMMITS_DIR);
+        for (String filename: fileNames) {
+            Commit commit = getCommit(filename);
+            String commitLog = buildCommitMessage(commit);
+            logMessage.append(commitLog);
+        }
+        System.out.println(logMessage);
+    }
+
+    public static void find(String searchMessage) {
+        StringBuilder findOutput = new StringBuilder();
+        List<String> fileNames = plainFilenamesIn(COMMITS_DIR);
+        for (String filename: fileNames) {
+            Commit commit = getCommit(filename);
+            String commitMessage = commit.getMessage();
+            if (commitMessage.equals(searchMessage)) {
+                findOutput.append(commit.getSha1Hash()).append("\n");
+            }
+        }
+        if (findOutput.length() > 0) {
+            System.out.println(findOutput);
+            return ;
+        }
+        System.out.println("Found no commit with that message.");
+    }
 }

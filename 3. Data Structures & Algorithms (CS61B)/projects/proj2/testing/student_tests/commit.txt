@@ -1,7 +1,0 @@
->>> init
-<<<
-+ a.txt A is for Apple
->>> add a.txt
-<<<
->>> commit "Initial commit"
-<<<

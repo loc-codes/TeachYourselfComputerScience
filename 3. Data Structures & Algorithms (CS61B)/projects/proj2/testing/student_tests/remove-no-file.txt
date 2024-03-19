@@ -1,5 +1,0 @@
->>> init
-<<<
->>> rm notexisting.txt
-<<<
-No reason to remove the file.

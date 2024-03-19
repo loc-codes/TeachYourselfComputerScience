@@ -30,6 +30,26 @@ public class Main {
                 }
                 String message = args[1];
                 Repository.commit(message);
+                break;
+            case "rm":
+                if (args.length < 2) {
+                    System.out.println("Incorrect operands.");
+                    System.exit(0);
+                }
+                Repository.rm(args[1]);
+                break;
+            case "log":
+                Repository.log();
+                break;
+            case "global-log":
+                Repository.globalLog();
+                break;
+            case "find":
+                if (args.length < 2) {
+                    System.out.println("Incorrect operands.");
+                    System.exit(0);
+                }
+                Repository.find(args[1]);
         }
     }
 }
