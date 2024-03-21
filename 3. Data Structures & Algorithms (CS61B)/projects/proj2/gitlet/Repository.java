@@ -21,14 +21,16 @@ public class Repository {
     public static final File CWD = new File(System.getProperty("user.dir"));
     /** The .gitlet directory. */
     public static final File GITLET_DIR = join(CWD, ".gitlet");
-    public static final File STAGING_AREA = join(GITLET_DIR, "staging");
+    public static final File STAGING_INDEX = join(GITLET_DIR, "staging");
+    public static final File STAGING_AREA = join(STAGING_INDEX, "add");
+    public static final File REMOVAL_AREA = join(STAGING_INDEX,  "remove");
     public static final File COMMITS_DIR = join(GITLET_DIR, "commits");
     public static final File BLOBS_DIR = join(GITLET_DIR, "blobs");
     public static final File REFS_DIR = join(GITLET_DIR, "refs");
-    public static final File HEADS_DIR = join(REFS_DIR, "heads");
+    public static final File BRANCHES_DIR = join(REFS_DIR, "heads");
 
     /** The directory for the master branch reference. */
-    public static final File MASTER_BRANCH = join(HEADS_DIR,  "master");
+    public static final File MASTER_BRANCH = join(BRANCHES_DIR,  "master");
     public static final File HEAD_FILE = join(GITLET_DIR, "HEAD");
 
 
@@ -42,8 +44,8 @@ public class Repository {
      * Stages the given file.
      * @param file The file to stage.
      */
-    private static void stageFile(File file) {
-        File stagedFile = join(STAGING_AREA, file.getName());
+    private static void stageFile(File file, String stagingType) {
+        File stagedFile = join(checkStagingType(stagingType), file.getName());
         writeContents(stagedFile, readContents(file));
     }
 
@@ -51,11 +53,22 @@ public class Repository {
      * Unstages the file with the given name.
      * @param fileName The name of the file to unstage.
      */
-    private static void unstageFile(String fileName) {
-        File stagedFile = join(STAGING_AREA, fileName);
+    private static void unstageFile(String fileName, String stagingType) {
+        File stagedFile = join(checkStagingType(stagingType), fileName);
         if (stagedFile.exists()) {
             stagedFile.delete();
         }
+    }
+
+    private static File checkStagingType(String stagingType) {
+        File stagingArea;
+        if (stagingType.equals("add")) {
+            stagingArea = STAGING_AREA;
+        }
+        else {
+            stagingArea = REMOVAL_AREA;
+        }
+        return stagingArea;
     }
 
     /** Gets the commit with a given hash */
@@ -73,9 +86,15 @@ public class Repository {
 
     /** Gets the head commit */
     private static Commit getCurrentCommit() {
-        String currentBranch = readContentsAsString(HEAD_FILE);
+        String currentBranch = getCurrentBranch();
         String currentCommitHash = readContentsAsString(join(GITLET_DIR, currentBranch));
         return getCommit(currentCommitHash);
+    }
+
+    /** Get Current Branch */
+    private static String getCurrentBranch() {
+        String currentBranch = readContentsAsString(HEAD_FILE);
+        return currentBranch;
     }
 
     private static String formatDate(Date date) {
@@ -116,7 +135,9 @@ public class Repository {
 
         // Create the initial structure for the Gitlet repository
         GITLET_DIR.mkdir();
+        STAGING_INDEX.mkdir();
         STAGING_AREA.mkdir();
+        REMOVAL_AREA.mkdir();
         BLOBS_DIR.mkdir();
         COMMITS_DIR.mkdir();
         join(GITLET_DIR, "refs").mkdir(); // Directory for branch references
@@ -150,24 +171,19 @@ public class Repository {
         // Check if the current version of the file is identical to the version in the current commit
         if (currentCommit.getBlobHash(fileName) != null && currentCommit.getBlobHash(fileName).equals(fileHash)) {
             // File has not changed, remove it from staging area if it's there
-            unstageFile(fileName);
+            unstageFile(fileName, "add");
             return;
         }
 
         // Stage the file for addition
-        stageFile(file);
+        stageFile(file, "add");
     }
 
 
     public static void commit(String message) {
-        if (message == null || message.isEmpty()) {
-            System.out.println("Please enter a commit message.");
-            return;
-        }
-
-
         File[] stagedFiles = STAGING_AREA.listFiles();
-        if (stagedFiles == null || stagedFiles.length == 0) {
+        File[] removeFiles = REMOVAL_AREA.listFiles();
+        if (stagedFiles == null && removeFiles == null) {
             System.out.println("No changes added to the commit.");
             return;
         }
@@ -175,30 +191,22 @@ public class Repository {
         Commit currentCommit = getCurrentCommit();
         Map<String, String> updatedBlobs = new HashMap<>(currentCommit.getBlobs()); // Clone current blobs
 
-        boolean hasStagedAdditions = false;
-        boolean hasStagedRemovals = false;
-        // Update blobs with staged files
+        // Update blobs with staged for addition files
         for (File file : stagedFiles) {
             String fileName = file.getName();
-            String fileHash = sha1(readContents(file));
-            if (fileName.startsWith("remove_")) {
-                // If the file is marked for removal, remove it from the updated blobs
-                String originalFileName = fileName.substring("remove_".length());
-                updatedBlobs.remove(originalFileName);
-                hasStagedRemovals = true;
-            }
-            else {
-                hasStagedAdditions = true;
-                updatedBlobs.put(fileName, fileHash);
-                File blobFile = join(BLOBS_DIR, fileHash);
-                writeContents(blobFile, readContents(file));
-            }
+            Blob blob = new Blob(fileName, file);
+            String fileHash = blob.getBlobHash();
+            updatedBlobs.put(fileName, fileHash);
+            File blobFile = join(BLOBS_DIR, fileHash);
+            writeObject(blobFile, blob);
             file.delete();
         }
 
-        if (!hasStagedAdditions && !hasStagedRemovals) {
-            System.out.println("No changes added to the commit.");
-            return;
+        // Update blobs with staged for removal files
+        for (File file : removeFiles) {
+            String fileName = file.getName();
+            updatedBlobs.remove(fileName);
+            file.delete();
         }
 
         // Create a new commit with the updated blobs
@@ -212,9 +220,9 @@ public class Repository {
     }
 
     public static void rm(String fileName) {
-        File fileToRemove = join(STAGING_AREA, fileName);
+        File fileToUnstage = join(STAGING_AREA, fileName);
         Commit currentCommit = getCurrentCommit();
-        boolean isStaged = fileToRemove.exists();
+        boolean isStaged = fileToUnstage.exists();
         boolean isTracked = currentCommit.getBlobs().containsKey(fileName);
 
         if (!isStaged && !isTracked) {
@@ -224,10 +232,18 @@ public class Repository {
 
         if (isStaged) {
             // If the file is currently staged, unstage it.
-            unstageFile(fileName);
+            unstageFile(fileName, "add");
         }
 
-
+        if (isTracked) {
+            String blobName = currentCommit.getBlobs().get(fileName);
+            File blobPath = join(BLOBS_DIR, blobName);
+            Blob blob = readObject(blobPath, Blob.class);
+            String blobFileName = blob.getFileName();
+            File fileToDelete = join(CWD, blobFileName);
+            stageFile(fileToDelete, "remove");
+            restrictedDelete(fileToDelete);
+        }
     }
 
     public static void log() {
@@ -268,5 +284,67 @@ public class Repository {
             return ;
         }
         System.out.println("Found no commit with that message.");
+    }
+
+    public static void status() {
+//        === Branches ===
+//        *master
+//        other-branch
+//
+//        === Staged Files ===
+//        wug.txt
+//        wug2.txt
+//
+//        === Removed Files ===
+//        goodbye.txt
+//
+//        === Modifications Not Staged For Commit ===
+//        junk.txt (deleted)
+//        wug3.txt (modified)
+//
+//        === Untracked Files ===
+//        random.stuff
+
+        StringBuilder status = new StringBuilder();
+        status.append("=== Branches ===\n");
+
+        // Find HEAD
+        String currentBranch = getCurrentBranch();
+        String currentBranchName = currentBranch.substring(currentBranch.lastIndexOf('/') + 1);
+        status.append("*").append(currentBranchName).append("\n");
+
+        // Find Branches
+        List<String> branches = plainFilenamesIn(REFS_DIR);
+        Collections.sort(branches);
+        for (String branch: branches) {
+            if (branch != currentBranchName) {
+                status.append(branch).append("\n");
+            }
+        }
+
+        status.append("\n=== Staged Files ===\n");
+        // Find Staged Files
+        List<String> stagedForAdditionFiles = plainFilenamesIn(STAGING_AREA);
+        if (!stagedForAdditionFiles.isEmpty()) {
+            // Sort the list alphabetically
+            Collections.sort(stagedForAdditionFiles);
+            for (String stagedFile : stagedForAdditionFiles) {
+                status.append(stagedFile).append("\n");
+            }
+        }
+
+
+        // Find Removed Files
+        status.append("\n=== Removed Files ===\n");
+        List<String> stagedForRemovalFiles = plainFilenamesIn(REMOVAL_AREA);
+        if (!stagedForRemovalFiles.isEmpty()) {
+            // Sort the list alphabetically
+            Collections.sort(stagedForRemovalFiles);
+            for (String stagedFile : stagedForRemovalFiles) {
+                status.append(stagedFile).append("\n");
+            }
+        }
+
+        System.out.println(status);
     }
 }

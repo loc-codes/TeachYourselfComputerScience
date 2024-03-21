@@ -25,7 +25,7 @@ public class Main {
                 break;
             case "commit":
                 if (args.length < 2) {
-                    System.out.println("Incorrect operands.");
+                    System.out.println("Please enter a commit message.");
                     System.exit(0);
                 }
                 String message = args[1];
@@ -50,6 +50,8 @@ public class Main {
                     System.exit(0);
                 }
                 Repository.find(args[1]);
+            case "status":
+                Repository.status();
         }
     }
 }
