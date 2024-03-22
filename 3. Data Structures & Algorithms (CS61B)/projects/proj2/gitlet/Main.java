@@ -1,7 +1,7 @@
 package gitlet;
 
 /** Driver class for Gitlet, a subset of the Git version-control system.
- *  @author TODO
+ *  @author Lachlan Young
  */
 public class Main {
 
@@ -10,8 +10,10 @@ public class Main {
      */
     public static void main(String[] args) {
         // TODO: what if args is empty?
-        String firstArg = args[0];
-        switch(firstArg) {
+        String filename;
+        String commitMessage;
+        String command = args[0];
+        switch(command) {
             case "init":
                 Repository.init();
                 break;
@@ -20,23 +22,24 @@ public class Main {
                     System.out.println("Incorrect operands.");
                     System.exit(0);
                 }
-                String filename = args[1];
+                filename = args[1];
                 Repository.add(filename);
                 break;
             case "commit":
                 if (args.length < 2) {
-                    System.out.println("Please enter a commit message.");
+                    System.out.println("Please enter a commit commitMessage.");
                     System.exit(0);
                 }
-                String message = args[1];
-                Repository.commit(message);
+                commitMessage = args[1];
+                Repository.commit(commitMessage);
                 break;
             case "rm":
                 if (args.length < 2) {
                     System.out.println("Incorrect operands.");
                     System.exit(0);
                 }
-                Repository.rm(args[1]);
+                filename = args[1];
+                Repository.rm(filename);
                 break;
             case "log":
                 Repository.log();
@@ -49,9 +52,25 @@ public class Main {
                     System.out.println("Incorrect operands.");
                     System.exit(0);
                 }
-                Repository.find(args[1]);
+                commitMessage = args[1];
+                Repository.find(commitMessage);
+                break;
             case "status":
                 Repository.status();
+                break;
+            case "checkout":
+                if (args[1].equals("--")) {
+                    filename = args[2];
+                    Repository.checkout(filename, null);
+                } else if (args[2].equals("--")) {
+                    String commitId = args[1];
+                    filename = args[3];
+                    Repository.checkout(filename, commitId);
+                } else {
+                    String branchName = args[2];
+                    Repository.checkoutBranch(branchName);
+                }
+                break;
         }
     }
 }

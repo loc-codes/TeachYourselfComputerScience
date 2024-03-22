@@ -23,4 +23,8 @@ public class Blob implements Serializable {
     public String getFileName() {
         return this.fileName;
     }
+
+    public byte[] getContents() {
+        return this.contents;
+    }
 }

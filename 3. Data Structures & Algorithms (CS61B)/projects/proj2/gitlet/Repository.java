@@ -3,6 +3,9 @@ package gitlet;
 
 import java.io.File;
 import java.util.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 import static gitlet.Utils.*;
 
@@ -81,6 +84,9 @@ public class Repository {
         if (commitPathExists) {
             return readObject(commitPath, Commit.class);
         }
+        else  {
+            System.out.println("No commit with that id exists.");
+        }
         return null;
     }
 
@@ -97,10 +103,22 @@ public class Repository {
         return currentBranch;
     }
 
+//    private static String formatDate(Date date) {
+//        Formatter f = new Formatter();
+//        f.format("Date: %tc", date);
+//        return f.toString();
+//    }
+
+
     private static String formatDate(Date date) {
-        Formatter f = new Formatter();
-        f.format("Date: %tc", date);
-        return f.toString();
+        // Create a SimpleDateFormat that matches the required date format
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy Z");
+        // Set the time zone if necessary, for example to UTC
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC")); // Adjust this if you need a specific time zone
+
+        // Format the date
+        String formattedDate = "Date: " + sdf.format(date);
+        return formattedDate;
     }
 
     private static String formatParents(List<String> parents) {
@@ -255,6 +273,7 @@ public class Repository {
             String firstParent = currentCommit.getFirstParent();
             currentCommit = getCommit(firstParent);
         }
+        logMessage.deleteCharAt(logMessage.length() - 1);
         System.out.println(logMessage);
     }
 
@@ -346,5 +365,34 @@ public class Repository {
         }
 
         System.out.println(status);
+    }
+
+    private static void checkoutBlob(Commit checkoutCommit, String filename) {
+        String blobHash = checkoutCommit.getBlobHash(filename);
+        if (blobHash == null) {
+            System.out.println("File does not exist in that commit.");
+            return ;
+        }
+        File blobPath = join(BLOBS_DIR, blobHash);
+        Blob blob = readObject(blobPath, Blob.class);
+        File filePath = join(CWD, blob.getFileName());
+        restrictedDelete(filePath);
+        writeContents(filePath, blob.getContents());
+    }
+
+    public static void checkout(String filename, String commitId) {
+        //Takes the version of the file as it exists in the head commit
+        if (commitId == null) {
+            Commit currentCommit = getCurrentCommit();
+            checkoutBlob(currentCommit, filename);
+        }
+        else {
+            Commit checkoutCommit = getCommit(commitId);
+            checkoutBlob(checkoutCommit, filename);
+        }
+        unstageFile(filename, "add");
+    }
+
+    public static void checkoutBranch(String branchName) {
     }
 }
