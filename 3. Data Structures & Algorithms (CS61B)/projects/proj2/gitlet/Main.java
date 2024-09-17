@@ -27,10 +27,13 @@ public class Main {
                 break;
             case "commit":
                 if (args.length < 2) {
-                    System.out.println("Please enter a commit commitMessage.");
+                    System.out.println("Please enter a commit message.");
                     System.exit(0);
                 }
                 commitMessage = args[1];
+                if (commitMessage.isEmpty()) {
+                    System.out.println("Please enter a commit message.");
+                }
                 Repository.commit(commitMessage);
                 break;
             case "rm":
@@ -67,10 +70,20 @@ public class Main {
                     filename = args[3];
                     Repository.checkout(filename, commitId);
                 } else {
+                    if (args.length > 2) {
+                        System.out.println("Incorrect operands.");
+                        System.exit(0);
+                    }
                     String branchName = args[2];
                     Repository.checkoutBranch(branchName);
                 }
                 break;
+            case "branch":
+                String branch = args[1];
+                Repository.branch(branch);
+            case "rm-branch":
+                String rmbranch = args[1];
+                Repository.removeBranch(rmbranch);
         }
     }
 }
