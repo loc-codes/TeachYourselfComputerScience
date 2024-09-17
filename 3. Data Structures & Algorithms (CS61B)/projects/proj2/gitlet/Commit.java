@@ -35,7 +35,11 @@ public class Commit implements Serializable {
         this.parentHashs = new ArrayList<>();
         this.parentHashs.add(parentHash);
         this.blobs = new HashMap<>(blobs); // Create a copy of the blobs map
-        this.sha1Hash = sha1(this.message, this.commitDate.toString(), this.getFirstParent(), this.blobs.toString());
+        this.sha1Hash = sha1(
+                this.message,
+                this.commitDate.toString(),
+                this.getFirstParent(),
+                this.blobs.toString());
     }
 
     // Getters and setters as needed

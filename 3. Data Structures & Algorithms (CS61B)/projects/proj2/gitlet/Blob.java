@@ -12,7 +12,7 @@ public class Blob implements Serializable {
 
     public Blob(String filename, File contents) {
         this.contents = readContents(contents);
-        this.blobHash = sha1((Object) this.contents);;
+        this.blobHash = sha1(this.contents);;
         this.fileName = filename;
     }
 
