@@ -78,3 +78,31 @@ this means x = 1
 - Note: arrays are not strictly variables, they are an abstraction on a sequence of variables and memory addresses
 - Array size gets lost when passed to a function, it on gets a passed the sequence of variables/addresses in memory
 - If I call sizeof() array in function scope, it returns sizeof first element
+
+## Strings
+- A String in C is just an array of characters
+- char letters[] = "abc"
+- const char letters[] = {'a', 'b', 'c', '\0'}
+- But how do we know when the string ends?
+    - because arrays in C don't know their size?
+    - Answer: Last character is followed by a 0 byte ('\0')
+        aka the null terminator
+
+- How do you tell how long a C string is?
+    - Count until you reach the null terminator
+
+ ## Pointer Arithmetic
+ - Pointer +- number
+    eg: pointer + 1 adds 1 something to the address
+    it adds 1 * sizeof(type) to the memory
+    eg: pointer at address 100
+    100 + 1 * sizeof(char) = 101 (ascii can be represented in 128 bits, or 2^7 bits ie: 1 Byte)
+    100 + 1 * sizeof(int) = 104 (int is 4 bytes)
+
+## Pointers and Allocations
+- When you declare a pointer eg: int *ptr; it doesn't actually point to anything yet
+    - it points somwhere (garbarge)
+    - Dereferencing causes as error
+
+- Option 1: Point to something that already exists
+- Option 2: allocate memory (discussed in next lecture)
