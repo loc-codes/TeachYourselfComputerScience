@@ -106,3 +106,7 @@ this means x = 1
 
 - Option 1: Point to something that already exists
 - Option 2: allocate memory (discussed in next lecture)
+
+### Pointers to Pointers
+- Pointer to a pointer, declared as **h
+- Allows you to globally change the value at the pointer of the pointer, useful inside functions
