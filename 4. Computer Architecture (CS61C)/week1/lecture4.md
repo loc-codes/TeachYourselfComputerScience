@@ -168,3 +168,74 @@ In this class, we will assume little endian unless otherwise
     - Returns a pointer with now size space (or NULL) and copies any contents from ptr
 - realloc can move or keep the address the same
 - DO NOT RELY ON OLD POINTER VALUES, always use the pointer returned by realloc
+
+### Memory Errors
+- Segmentation Fault
+    - Attempts to access memory not allocated to it
+    - Common in CS61C
+
+- Bus Error
+    - Invalid address alignment
+    - Less common in CS61C
+
+### Common Memory Problems
+1. Using uninitalised values
+2. Using memory that you don't own
+    - NULL or garbage data as pointer
+    - Deallocated stack or heap variable
+    - Out of bounds reference to stack or heap array
+3. Freeing invalid memory
+4. Memory leaks
+
+### Using unitalised values
+void foo(int *p) {
+    int j;
+    *p = j; <- j is unitialised (garbage), copied to p
+}
+
+### Using Memory you don't own
+- Common, trying to interact with a NULL
+- eg: NULL->next, there's no pointer coming from NULL
+
+## Memory Leaks
+- Remember Java has garbage collection but C doesn;t
+- Memory Leak: when you allocate memory but lose the pointer necessary to free it
+- Rule of Thumb: More mallocs than frees probable means a memory leak
+- Potential Memory Leak: Changing pointer, do you still have a copy to use free later?
+
+### Debugging Tools
+- Valgrind
+- Runtime analysis tools for finding memory errors
+- Dynamic analysis tool: collects information on memory management while program runs
+- No tool is guaranteed to find ALL memory bugs; this is a very callenging programming language research problem
+
+## C Wrap-Up: Create a Linked List
+- We want to generate a linked list of strings
+- This example uses structs, pointers, malloc() and free()
+
+struct Node {
+    char *value;
+    struct Node *next; <- The link of the linked list, pointer to next Node
+} node;
+
+- Want to write addNode to support functionality as shown:
+char *s1 = "start", *s2 = "middle", *s3 = "end" (stored in static memory as string literals)
+struct node *theList = NULL <- end of list
+theList = addNode(s3, theList);
+theList = addNode(s2, theList);
+theList = addNode(s1, theList);
+
+node *addNode(char *s, node *list) {
+    node *new = (node *) malloc(sizeof(NodeStruct));
+    new->value = (char *) malloc (strlen(s) + 1);
+    strcpy(new->value, s);
+    new->next = list
+    return new;
+}
+
+node *deleteNode(node *list) {
+    node *temp = list->next;
+    free(list->value);
+    free(list);
+    return temp;
+}
