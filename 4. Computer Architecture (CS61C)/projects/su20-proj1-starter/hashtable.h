@@ -28,6 +28,8 @@ struct HashBucket {
 typedef struct HashTable {
   // -- TODO --
   // HINT: Take a look at createHashTable.
+  int size;
+  
 } HashTable;
 
 /*
