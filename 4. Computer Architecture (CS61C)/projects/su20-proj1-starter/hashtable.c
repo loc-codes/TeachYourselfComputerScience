@@ -1,22 +1,33 @@
 #include "hashtable.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 /*
  * This creates a new hash table of the specified size and with
  * the given hash function and comparison function.
  */
+// Sample Call: createHashTable(2255, &stringHash, &stringEquals)
 HashTable *createHashTable(int size, unsigned int (*hashFunction)(void *),
                            int (*equalFunction)(void *, void *)) {
   int i = 0;
   HashTable *newTable = malloc(sizeof(HashTable));
   newTable->size = size;
-  newTable->data = malloc(sizeof(struct HashBucket *) * size);
+  newTable->data = malloc(sizeof(HashBucket *) * size);
   for (i = 0; i < size; ++i) {
     newTable->data[i] = NULL;
   }
   newTable->hashFunction = hashFunction;
   newTable->equalFunction = equalFunction;
   return newTable;
+}
+
+HashBucket *findBucket(HashTable *table, void *key) {
+    // Take in a table and key, and return pointer to start of HashBucket at key
+    HashFunction hashFunction = table->hashFunction;
+    int index = hashFunction(key) % table->size;
+    //printf("Found bucket\n");
+    HashBucket *start = table->data[index];
+    return start;
 }
 
 /*
@@ -28,11 +39,32 @@ HashTable *createHashTable(int size, unsigned int (*hashFunction)(void *),
  * we can use the string as both the key and data.
  */
 void insertData(HashTable *table, void *key, void *data) {
-  // -- TODO --
-  // HINT:
   // 1. Find the right hash bucket location with table->hashFunction.
+
   // 2. Allocate a new hash bucket struct.
+  HashBucket *newBucket = malloc(sizeof(HashBucket));;
+  newBucket->key = key;
+  newBucket->data = data;
+  newBucket->next = NULL;
+  printf("New bucket created with key = %s, data = %s\n", (char *)key, (char *)data);
+
+  HashBucket *current = findBucket(table, key);
+
+
   // 3. Append to the linked list or create it if it does not yet exist. 
+  // If: No existing entries, place the new bucket directly
+  if (current == NULL) {
+      current = newBucket;
+  }
+  // Else: Traverse the linked list to find the end
+  else {
+      HashBucket *prev = NULL; 
+      while(current != NULL) {
+          prev = current;
+          current = current->next;
+      }
+      prev->next = newBucket;
+  }
 }
 
 /*
@@ -43,5 +75,14 @@ void *findData(HashTable *table, void *key) {
   // -- TODO --
   // HINT:
   // 1. Find the right hash bucket with table->hashFunction.
+  HashBucket *current = findBucket(table, key);
   // 2. Walk the linked list and check for equality with table->equalFunction.
+  equalFunction equalFunc = table->equalFunction;
+  while (current != NULL) {
+      if (equalFunc(key, current->key)) {
+          return current->data;
+      }
+      current = current->next;
+  }
+  return NULL;
 }

@@ -19,17 +19,21 @@
  * and int (*) (void *, void *), to compute the hash and check
  * for equality.
  */
-struct HashBucket {
+typedef unsigned int (*HashFunction)(void *key);
+typedef int (*equalFunction)(void *s1, void *s2);
+
+
+typedef struct HashBucket {
   void *key;
   void *data;
   struct HashBucket *next;
-};
+} HashBucket;
 
 typedef struct HashTable {
-  // -- TODO --
-  // HINT: Take a look at createHashTable.
   int size;
-  
+  HashBucket **data;
+  HashFunction hashFunction;
+  equalFunction equalFunction;
 } HashTable;
 
 /*

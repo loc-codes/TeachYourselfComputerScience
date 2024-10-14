@@ -8,6 +8,12 @@
  */
 #include "philspel.h"
 
+
+/*
+ * Include the utils module
+ */
+#include "utils.h"
+
 /*
  * Standard IO and file routines.
  */
@@ -43,6 +49,7 @@ int main(int argc, char **argv) {
     fprintf(stderr, "Specify a dictionary\n");
     return 0;
   }
+
   /*
    * Allocate a hash table to store the dictionary.
    */
@@ -70,7 +77,14 @@ int main(int argc, char **argv) {
  */
 unsigned int stringHash(void *s) {
   char *string = (char *)s;
-  // -- TODO --
+  unsigned int hash = 5381;
+  int c;
+  while (*string) {
+    c = *string;
+    hash = hash * 33 + c;
+    string += 1; // move by 1, as char is 1 byte
+  }
+  return hash;
 }
 
 /*
@@ -80,7 +94,15 @@ unsigned int stringHash(void *s) {
 int stringEquals(void *s1, void *s2) {
   char *string1 = (char *)s1;
   char *string2 = (char *)s2;
-  // -- TODO --
+
+  while (*string1 && *string2) {
+      if (*string1 != *string2) {
+          return 0;
+      }
+      string1 += 1; // move by 1, as char is 1 byte
+      string2 += 1;
+  }
+  return *string1 == '\0' && *string2 == '\0';
 }
 
 /*
@@ -88,19 +110,45 @@ int stringEquals(void *s1, void *s2) {
  * store it in the hash table.  You should first open the file specified,
  * then read the words one at a time and insert them into the dictionary.
  * Once the file is read in completely, return.  You will need to allocate
- * (using malloc()) space for each word.  As described in the spec, you
+ * (using malloc()) space for each word. 
+ * 
+ * You CANNOT assume that the specified file exists.  If the file does
+ * NOT exist, you should print some message to standard error and call exit(1)
+ * to cleanly exit the program. 
+ * 
+ * 
+ * As described in the spec, you
  * can initially assume that no word is longer than 60 characters.  However,
  * for the final 20% of your grade, you cannot assumed that words have a bounded
- * length.  You CANNOT assume that the specified file exists.  If the file does
- * NOT exist, you should print some message to standard error and call exit(1)
- * to cleanly exit the program.
+ * length.  
+ * 
  *
  * Since the format is one word at a time, with new lines in between,
  * you can safely use fscanf() to read in the strings until you want to handle
  * arbitrarily long dictionary chacaters.
  */
 void readDictionary(char *dictName) {
-  // -- TODO --
+  // -- TODO --f
+  FILE *pDictionary = fopen(dictName, "r");
+  if (pDictionary == NULL) {
+    printf("Error: Could not open file\n");
+    return;
+  }
+  char word[60];
+
+  while (fscanf(pDictionary, "%s", word) != EOF) {
+    
+    char *key = malloc(strlen(word) + 1);
+    char *data = malloc(strlen(word) + 1);
+    strcpy(key, word);
+    strcpy(data, word);
+
+    //printf("Key: %s, Data: %s", *key, *data);
+    // pass table in as param to readDict
+    insertData(dictionary, key, data);
+  }
+  
+  fclose(pDictionary);
 }
 
 /*
@@ -125,5 +173,45 @@ void readDictionary(char *dictName) {
  * final 20% of your grade, you cannot assume words have a bounded length.
  */
 void processInput() {
-  // -- TODO --
+    // char input[100];
+    int ch;
+    char current_word[100];
+    int word_index = 0;
+    // const int CHUNK_SIZE = 128;
+
+    while ((ch = getchar()) != EOF) {
+        // Read one word at a time
+        if (ch != ' ' && ch != '\n') {
+            // Prevent buffer overflow
+            if (word_index < sizeof(current_word) - 1) {
+                current_word[word_index] = ch;
+                word_index++;
+            }
+        } else {
+            // Terminate the string
+            current_word[word_index] = '\0';
+
+            // Process the word
+            //printf("Current word: %s\n", current_word);
+
+            // Create different versions of the word
+            char original_word[100];
+            char lower_word[100];
+            char title_word[100];
+
+            strcpy(original_word, current_word);
+            convertToLowercase(current_word, lower_word); // Convert to lowercase
+            convertToTitleCase(current_word, title_word); // Convert to title case
+            printf("Current word formats: %s %s % s\n", current_word, lower_word, title_word);
+
+            // Search in the dictionary
+            findData(dictionary, original_word);
+            findData(dictionary, lower_word);
+            findData(dictionary, title_word);
+
+            // Reset word_index for the next word
+            word_index = 0;
+            memset(current_word, 0, sizeof(current_word));  // Clears the entire string (fills with zeros)
+        }
+    }
 }
