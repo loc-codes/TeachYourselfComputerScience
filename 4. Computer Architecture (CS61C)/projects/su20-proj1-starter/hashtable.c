@@ -21,10 +21,11 @@ HashTable *createHashTable(int size, unsigned int (*hashFunction)(void *),
   return newTable;
 }
 
-HashBucket *findBucket(HashTable *table, void *key) {
+HashBucket *findBucket(HashTable *table, void *key, int *indexOut) {
     // Take in a table and key, and return pointer to start of HashBucket at key
     HashFunction hashFunction = table->hashFunction;
     int index = hashFunction(key) % table->size;
+    *indexOut = index;
     //printf("Found bucket\n");
     HashBucket *start = table->data[index];
     return start;
@@ -40,30 +41,28 @@ HashBucket *findBucket(HashTable *table, void *key) {
  */
 void insertData(HashTable *table, void *key, void *data) {
   // 1. Find the right hash bucket location with table->hashFunction.
+  int index;
+  int *pIndex = &index;
+  HashBucket *current = findBucket(table, key, pIndex);
+
 
   // 2. Allocate a new hash bucket struct.
   HashBucket *newBucket = malloc(sizeof(HashBucket));;
   newBucket->key = key;
   newBucket->data = data;
   newBucket->next = NULL;
-  printf("New bucket created with key = %s, data = %s\n", (char *)key, (char *)data);
-
-  HashBucket *current = findBucket(table, key);
-
 
   // 3. Append to the linked list or create it if it does not yet exist. 
   // If: No existing entries, place the new bucket directly
   if (current == NULL) {
-      current = newBucket;
+      table->data[index] = newBucket;
   }
   // Else: Traverse the linked list to find the end
   else {
-      HashBucket *prev = NULL; 
-      while(current != NULL) {
-          prev = current;
+      while(current->next != NULL) {
           current = current->next;
       }
-      prev->next = newBucket;
+      current->next = newBucket;
   }
 }
 
@@ -75,7 +74,9 @@ void *findData(HashTable *table, void *key) {
   // -- TODO --
   // HINT:
   // 1. Find the right hash bucket with table->hashFunction.
-  HashBucket *current = findBucket(table, key);
+  int index;
+  int *pIndex = &index;
+  HashBucket *current = findBucket(table, key, pIndex);
   // 2. Walk the linked list and check for equality with table->equalFunction.
   equalFunction equalFunc = table->equalFunction;
   while (current != NULL) {

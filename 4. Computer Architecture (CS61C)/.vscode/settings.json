@@ -6,5 +6,6 @@
         "string_view": "c",
         "stdlib.h": "c",
         "hashtable.h": "c"
-    }
+    },
+    "C_Cpp.errorSquiggles": "enabled"
 }

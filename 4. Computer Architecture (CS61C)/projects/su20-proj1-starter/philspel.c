@@ -137,7 +137,7 @@ void readDictionary(char *dictName) {
   char word[60];
 
   while (fscanf(pDictionary, "%s", word) != EOF) {
-    
+    // printf("Word: %s\n", word);
     char *key = malloc(strlen(word) + 1);
     char *data = malloc(strlen(word) + 1);
     strcpy(key, word);
@@ -150,6 +150,25 @@ void readDictionary(char *dictName) {
   
   fclose(pDictionary);
 }
+
+int searchDictionary(char *str) {
+    char lower_str[strlen(str) + 1];
+    char title_str[strlen(str) + 1];
+    convertToLowercase(str, lower_str); // Convert to lowercase
+    convertToTitleCase(str, title_str); // Convert to title case
+    //fprintf(stderr, "CURRENT WORD: %s ", str);
+    if (
+    findData(dictionary, str) == NULL &&
+    findData(dictionary, lower_str) == NULL &&
+    findData(dictionary, title_str) == NULL
+    ) {
+        return 0;
+    }
+    else {
+        return 1;
+    }
+}
+
 
 /*
  * This should process standard input (stdin) and copy it to standard
@@ -175,43 +194,38 @@ void readDictionary(char *dictName) {
 void processInput() {
     // char input[100];
     int ch;
-    char current_word[100];
-    int word_index = 0;
-    // const int CHUNK_SIZE = 128;
+    char buffer[1024];
+    int index = 0;
 
     while ((ch = getchar()) != EOF) {
-        // Read one word at a time
-        if (ch != ' ' && ch != '\n') {
+        if (isalpha(ch)) {
             // Prevent buffer overflow
-            if (word_index < sizeof(current_word) - 1) {
-                current_word[word_index] = ch;
-                word_index++;
-            }
+            buffer[index] = ch;
+            index++;
         } else {
             // Terminate the string
-            current_word[word_index] = '\0';
-
-            // Process the word
-            //printf("Current word: %s\n", current_word);
-
-            // Create different versions of the word
-            char original_word[100];
-            char lower_word[100];
-            char title_word[100];
-
-            strcpy(original_word, current_word);
-            convertToLowercase(current_word, lower_word); // Convert to lowercase
-            convertToTitleCase(current_word, title_word); // Convert to title case
-            printf("Current word formats: %s %s % s\n", current_word, lower_word, title_word);
-
-            // Search in the dictionary
-            findData(dictionary, original_word);
-            findData(dictionary, lower_word);
-            findData(dictionary, title_word);
-
+            if (index != 0) {
+                buffer[index] = '\0';
+                if (searchDictionary(buffer)) {
+                    printf("%s", buffer);
+                }
+                else {
+                    printf("%s [sic]", buffer);
+                }
+            }
+            printf("%c", ch);
             // Reset word_index for the next word
-            word_index = 0;
-            memset(current_word, 0, sizeof(current_word));  // Clears the entire string (fills with zeros)
+            index = 0;
         }
     }
+    if (index != 0) {
+        buffer[index] = '\0';
+        if (searchDictionary(buffer)) {
+            printf("%s", buffer);
+        }
+        else {
+            printf("%s [sic]", buffer);
+        }
+    }
+    //printf("==PROCESS INPUT ENDS HERE==\n");
 }
