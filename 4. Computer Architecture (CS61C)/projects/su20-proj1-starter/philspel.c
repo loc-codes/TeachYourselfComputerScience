@@ -4,7 +4,7 @@
 #include "hashtable.h"
 
 /*
- * Include the header file.
+ * Include the header ffile.
  */
 #include "philspel.h"
 
@@ -134,7 +134,7 @@ void readDictionary(char *dictName) {
     printf("Error: Could not open file\n");
     return;
   }
-  char word[60];
+  char word[1024];
 
   while (fscanf(pDictionary, "%s", word) != EOF) {
     // printf("Word: %s\n", word);
